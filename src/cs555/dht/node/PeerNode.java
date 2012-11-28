@@ -376,7 +376,7 @@ public class PeerNode extends Node{
 			break;
 			
 		default:
-			System.out.println("Unrecognized Message : " + messageType);
+			//System.out.println("Unrecognized Message : " + messageType);
 			break;
 		}
 	}
