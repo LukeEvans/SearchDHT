@@ -10,5 +10,5 @@ ssh fennel $cmd &
 ssh mushroom $cmd &   
 ssh lettuce $cmd & 
 ssh parsley $cmd &
-ssh pepper $cmd & 
+ssh potato $cmd & 
 ssh radish $cmd &
