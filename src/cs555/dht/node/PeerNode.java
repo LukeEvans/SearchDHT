@@ -278,6 +278,7 @@ public class PeerNode extends Node{
 			System.out.println("Got words set: " + words);
 
 			for (Word word : words.words) {
+				word.hash = Tools.generateHash(word.word);
 				handleWord(word);
 			}
 			
