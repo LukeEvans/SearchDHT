@@ -10,8 +10,8 @@ public class Word implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	transient public String word;
-	transient public ArrayList<Search> searchSet;
+    public String word;
+	public ArrayList<Search> searchSet;
 	
 	//================================================================================
 	// Constructors
