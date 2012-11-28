@@ -40,4 +40,6 @@ public class Constants {
 	public static final String base_path = "/tmp/evansl/dhtData/";
 	
 	public static final int Refresh_Time = 120;
+	
+	public static final boolean logging = false;
 }
