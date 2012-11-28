@@ -233,11 +233,7 @@ public class PeerNode extends Node{
 		int messageType = Tools.getMessageType(bytes);
 
 		Object obj = Tools.bytesToObject(bytes);
-		
-		if (obj == null) {
-			System.out.println("null object");
-		}
-		
+
 		if (obj != null && obj instanceof WordSet) {
 			WordSet words = (WordSet) obj;
 			System.out.println("Got words set");
@@ -245,10 +241,6 @@ public class PeerNode extends Node{
 			return;
 		}
 		
-		if (obj != null && obj instanceof AccessPoint) {
-			System.out.println("Got an access point");
-			return;
-		}
 		
 		switch (messageType) {
 		case Constants.lookup_request:
