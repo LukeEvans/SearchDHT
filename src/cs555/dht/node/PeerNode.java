@@ -240,7 +240,12 @@ public class PeerNode extends Node{
 			
 			return;
 		}
-		
+
+		if (obj != null && obj instanceof AccessPoint) {
+			System.out.println("Got access pong");
+			
+			return;
+		}
 		
 		switch (messageType) {
 		case Constants.lookup_request:
