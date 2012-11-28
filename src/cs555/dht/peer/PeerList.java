@@ -2,6 +2,7 @@ package cs555.dht.peer;
 
 import java.util.ArrayList;
 
+import cs555.dht.peer.Peer;
 import cs555.dht.utilities.*;
 
 // Peer list is a data structure to maintain the list of peers in the system
@@ -57,40 +58,62 @@ public class PeerList {
 		if (listOfPeers.size() == 0){
 			return null;
 		}
-		
+
 		int peerIndex = Math.abs(Tools.generateRandomNumber()) % listOfPeers.size();
 		return listOfPeers.get(peerIndex);
 	}
 
+	public Peer getReadyPeer() {
+		
+		Peer p = getNextPeer();
+		
+		while (!p.ready) {
+			p = getNextPeer();
+		}
+		
+		p.ready = false;
+		
+		return p;
+	}
 	
 	// Get first peer
 	public Peer getFirstPeer(){
 		if (listOfPeers.size() == 0){
 			return null;
 		}
-		
+
 		return listOfPeers.get(0);
+	}
+
+	public ArrayList<Peer> getPeerReadySet(int n) {
+		ArrayList<Peer> set = new ArrayList<Peer>();
+
+		for (int i=0; i<n; i++) {
+			set.add(getReadyPeer());
+		}
+
+		return set;
 	}
 	
 	public ArrayList<Peer> getPeerSet(int n) {
 		ArrayList<Peer> set = new ArrayList<Peer>();
-		
+
 		for (int i=0; i<n; i++) {
 			set.add(getNextPeer());
 		}
-		
+
 		return set;
 	}
-	
+
 	// Get all peers
 	public ArrayList<Peer> getAllPeers(){
 		return listOfPeers;
 	}
-	
+
 	public int size(){
 		return listOfPeers.size();
 	}
-	
+
 	// Determine if hash is acceptable to add
 	public boolean hashUnique(int hash) {
 		for (Peer p : listOfPeers) {
@@ -98,10 +121,10 @@ public class PeerList {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	//================================================================================
 	// House Keeping
 	//================================================================================

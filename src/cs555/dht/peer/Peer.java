@@ -13,6 +13,8 @@ public class Peer {
 	public int id;
 	Link link;
 
+	public boolean ready;
+	
 	//================================================================================
 	// Constructors
 	//================================================================================
@@ -21,14 +23,16 @@ public class Peer {
 		port = p;
 		id = h;
 		link = null;
+		ready = true;
 	}
-	
+
 	public Peer(String host, int p) {
 		hostname = host;
 		port = p;
 		id = -1;
+		ready = true;
 	}
-	
+
 	//================================================================================
 	// Link Mehotds
 	//================================================================================
@@ -46,7 +50,7 @@ public class Peer {
 		if (link != null) { 
 			link.sendData(bytes);
 		}
-		
+
 		else {
 			System.out.println("Fucking link is null");
 		}
@@ -55,7 +59,7 @@ public class Peer {
 	public byte[] waitForData() {
 		return link.waitForData();
 	}
-	
+
 	//================================================================================
 	// House Keeping
 	//================================================================================

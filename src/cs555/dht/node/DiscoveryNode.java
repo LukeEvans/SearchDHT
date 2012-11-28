@@ -72,7 +72,7 @@ public class DiscoveryNode extends Node{
 		if (obj != null && obj instanceof AccessPointList) {
 			AccessPointList request = (AccessPointList) obj;
 			
-			for (Peer p : peerList.getPeerSet(request.size)) {
+			for (Peer p : peerList.getPeerReadySet(request.size)) {
 				request.addAccess(new AccessPoint(p.hostname, p.port));
 			}
 			
