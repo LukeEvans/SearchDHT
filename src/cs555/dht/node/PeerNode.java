@@ -23,7 +23,7 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
-import cs555.search.common.AccessPoint;
+import cs555.search.common.Continue;
 import cs555.search.common.Word;
 import cs555.search.common.WordSet;
 
@@ -254,7 +254,8 @@ public class PeerNode extends Node{
 	public void handleWord(Word word) {
 		// If the word is mine, add it to our word list
 		if (state.itemIsMine(word.hash)) {
-			System.out.println("My id : " + id + " word id: " + word.hash);
+			//System.out.println("My id : " + id + " word id: " + word.hash);
+			words.tallyWord(word);
 		}
 		
 		else {
@@ -282,6 +283,9 @@ public class PeerNode extends Node{
 				word.hash = Tools.generateHash(word.word);
 				handleWord(word);
 			}
+			
+			Continue processed = new Continue("continue");
+			l.sendData(Tools.objectToBytes(processed));
 			
 			return;
 		}
@@ -450,6 +454,13 @@ public class PeerNode extends Node{
 			System.out.println("================================================================================\n");
 		}
 	}
+	
+	public void printWordSet() {
+		System.out.println("\n================================================================================");
+		System.out.println(" : " + words);
+		System.out.println("================================================================================\n");
+		
+	}
 
 	//================================================================================
 	//================================================================================
@@ -501,6 +512,10 @@ public class PeerNode extends Node{
 				cont = false;
 				System.exit(0);
 
+			}
+			
+			if (input.equalsIgnoreCase("words")) {
+				peer.printWordSet();
 			}
 		}
 	}
