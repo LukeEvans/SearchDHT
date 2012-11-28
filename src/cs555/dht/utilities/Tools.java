@@ -12,6 +12,46 @@ import java.security.NoSuchAlgorithmException;
 // Functions used all over the program. Handy location
 public class Tools {
 
+	//================================================================================
+	// Serialize Functions
+	//================================================================================
+	public static byte[] objectToBytes(Object o) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		try {
+		  out = new ObjectOutputStream(bos);   
+		  out.writeObject(o);
+		  byte[] bytes = bos.toByteArray();
+		  
+		  out.close();
+		  bos.close();
+		  
+		  return bytes;
+		  
+		} catch(IOException e) {
+			System.out.println("Could not create bytes from object");
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Object bytesToObject(byte[] bytes) {
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		ObjectInput in = null;
+		try {
+		  in = new ObjectInputStream(bis);
+		  Object o = in.readObject(); 
+		  
+		  bis.close();
+		  in.close();
+		  
+		  return o;
+		  
+		} catch(Exception e) {
+			//System.out.println("Could not create object from bytes");
+			return null;
+		}
+	}
 	// ================================================================================
 	// Message functions
 	// ================================================================================

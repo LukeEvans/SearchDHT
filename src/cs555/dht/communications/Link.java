@@ -42,7 +42,9 @@ public class Link {
 		OutputStream sout = Tools.createOutputStream(socket);
 
 		try {
+			sout.flush();
 			sout.write(dataToBeSent);
+			sout.flush();
 		} catch (IOException e){
 			Tools.printStackTrace(e);
 		}

@@ -1,5 +1,7 @@
 package cs555.dht.node;
 
+import java.io.IOException;
+
 import cs555.dht.communications.Link;
 import cs555.dht.peer.Peer;
 import cs555.dht.peer.PeerList;
@@ -11,6 +13,8 @@ import cs555.dht.wireformats.RandomPeerResponse;
 import cs555.dht.wireformats.RegisterRequest;
 import cs555.dht.wireformats.RegisterResponse;
 import cs555.dht.wireformats.Verification;
+import cs555.search.common.AccessPoint;
+import cs555.search.common.AccessPointList;
 
 public class DiscoveryNode extends Node{
 
@@ -25,6 +29,36 @@ public class DiscoveryNode extends Node{
 		peerList = list;
 	}
 
+	public void establishLinks() {
+		for (Peer p : peerList.getAllPeers()) {
+			p.setLink(connect(p));
+			p.initLink();
+		}
+	}
+	
+	//================================================================================
+	// Send
+	//================================================================================
+	public void sendData(Peer p, byte[] bytes) {
+		try {
+			p.sendData(bytes);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendObject(Peer p, Object o) {
+		sendData(p, Tools.objectToBytes(o));
+	}
+	
+	public void broadcastObject(Object o) {
+		byte[] data = Tools.objectToBytes(o);
+		
+		for (Peer p : peerList.getAllPeers()) {
+			sendData(p, data);
+		}
+	}
 
 
 	//================================================================================
@@ -34,6 +68,18 @@ public class DiscoveryNode extends Node{
 	public synchronized void receive(byte[] bytes, Link l){
 		int messageType = Tools.getMessageType(bytes);
 
+		Object obj = Tools.bytesToObject(bytes);
+		if (obj != null && obj instanceof AccessPointList) {
+			AccessPointList request = (AccessPointList) obj;
+			
+			for (Peer p : peerList.getPeerSet(request.size)) {
+				request.addAccess(new AccessPoint(p.hostname, p.port));
+			}
+			
+			l.sendData(Tools.objectToBytes(request));
+			
+			return;
+		}
 		switch (messageType) {
 
 		case Constants.Registration_Request:
@@ -129,6 +175,6 @@ public class DiscoveryNode extends Node{
 		// Create node
 		DiscoveryNode manager = new  DiscoveryNode(peerList, port);
 		manager.initServer();
-
+		manager.establishLinks();
 	}
 }

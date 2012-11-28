@@ -1,5 +1,9 @@
 package cs555.dht.peer;
 
+import java.io.IOException;
+
+import cs555.dht.communications.Link;
+
 // Class to abstract the peer
 public class Peer {
 
@@ -7,6 +11,7 @@ public class Peer {
 	public int port;
 	public String nickname;
 	public int id;
+	Link link;
 
 	//================================================================================
 	// Constructors
@@ -15,12 +20,40 @@ public class Peer {
 		hostname = host;
 		port = p;
 		id = h;
+		link = null;
 	}
 	
 	public Peer(String host, int p) {
 		hostname = host;
 		port = p;
 		id = -1;
+	}
+	
+	//================================================================================
+	// Link Mehotds
+	//================================================================================
+	public void setLink(Link l) {
+		link = l;
+	}
+
+	public void initLink() {
+		if (link != null) {
+			link.initLink();
+		}
+	}
+
+	public void sendData(byte[] bytes) throws IOException {
+		if (link != null) { 
+			link.sendData(bytes);
+		}
+		
+		else {
+			System.out.println("Fucking link is null");
+		}
+	}
+
+	public byte[] waitForData() {
+		return link.waitForData();
 	}
 	
 	//================================================================================

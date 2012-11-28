@@ -72,6 +72,16 @@ public class PeerList {
 		return listOfPeers.get(0);
 	}
 	
+	public ArrayList<Peer> getPeerSet(int n) {
+		ArrayList<Peer> set = new ArrayList<Peer>();
+		
+		for (int i=0; i<n; i++) {
+			set.add(getNextPeer());
+		}
+		
+		return set;
+	}
+	
 	// Get all peers
 	public ArrayList<Peer> getAllPeers(){
 		return listOfPeers;
