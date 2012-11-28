@@ -44,7 +44,7 @@ public class Constants {
 	
 	public static final int Refresh_Time = 120;
 	
-	public static final boolean logging = false;
+	public static final boolean logging = true;
 	
 	public static final List<Integer> hashes = Arrays.asList(0,6554,13107,19661,26215,32768,39323,45877,52431,58985);
 }

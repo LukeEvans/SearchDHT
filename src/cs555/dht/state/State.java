@@ -1,10 +1,10 @@
 package cs555.dht.state;
 
+import cs555.dht.node.Node;
 import cs555.dht.node.PeerNode;
 import cs555.dht.peer.*;
 import cs555.dht.utilities.Constants;
 import cs555.dht.wireformats.*;
-import cs555.dht.wireformats.PredessesorRequest;
 
 public class State {
 	public Peer successor;
@@ -165,9 +165,10 @@ public class State {
 	}
 
 	// Decide where to put this peer in Finger Table
-	public void parseState(LookupRequest l) {
+	public void parseState(LookupRequest l, Node n) {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
-
+		peer.setLink(n.connect(peer));
+		
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
 			addSucessor(peer, false);

@@ -11,7 +11,7 @@ public class Peer {
 	public int port;
 	public String nickname;
 	public int id;
-	Link link;
+	public Link link;
 
 	public boolean ready;
 	

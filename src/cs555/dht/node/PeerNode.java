@@ -168,12 +168,12 @@ public class PeerNode extends Node{
 
 		// Tell our successor we're leaving
 		PredessesorLeaving predLeaving = new PredessesorLeaving(state.predecessor.hostname, state.predecessor.port, state.predecessor.id);
-		Link successorLink = connect(state.successor);
+		Link successorLink = state.successor.link; 
 		successorLink.sendData(predLeaving.marshall());
 
 		// Tell our predessor we're leaving
 		SuccessorLeaving sucLeaving = new SuccessorLeaving(state.successor.hostname, state.successor.port, state.successor.id);
-		Link predLink = connect(state.predecessor);
+		Link predLink = state.predecessor.link;
 		predLink.sendData(sucLeaving.marshall());
 
 		// Pass all data to our successor
@@ -215,12 +215,12 @@ public class PeerNode extends Node{
 	// Send
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
-		Link lookupPeer = connect(p);
+		Link lookupPeer = p.link; 
 		lookupPeer.sendData(l.marshall());
 	}
 
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
-		Link sucessorLink = connect(p);
+		Link sucessorLink = p.link; 
 		sucessorLink.initLink();
 		sucessorLink.sendData(r.marshall());
 	}
@@ -230,10 +230,10 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void transferData(DataItem d, Peer p) {
 
-		Link link = connect(p);
+		Link link = p.link;
 
 		if (link == null){
-			link = connect(state.getNextSuccessor());
+			link = state.getNextSuccessor().link;
 
 		}
 
@@ -260,7 +260,7 @@ public class PeerNode extends Node{
 		
 		else {
 			Peer nextPeer = state.getNexClosestPeer(word.hash);
-			Link nextHop = connect(nextPeer);
+			Link nextHop = nextPeer.link; 
 			nextHop.sendData(Tools.objectToBytes(word));
 		}
 	}
@@ -314,10 +314,10 @@ public class PeerNode extends Node{
 			if (state.itemIsMine(resolveID)) {
 
 				LookupResponse response = new LookupResponse(hostname, port, id, resolveID, entry);
-				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
-				Link requesterLink = connect(requester);
+//				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
+//				Link requesterLink = connect(requester);
 
-				requesterLink.sendData(response.marshall());
+				l.sendData(response.marshall());
 			}
 
 			// Else, pass it along
@@ -325,7 +325,7 @@ public class PeerNode extends Node{
 
 				//System.out.println("is not mine : " + resolveID);
 				Peer nextPeer = state.getNexClosestPeer(resolveID);
-				Link nextHop = connect(nextPeer);
+				Link nextHop = nextPeer.link; 
 
 				if (nextHop == null) {
 					state.update();
@@ -349,7 +349,7 @@ public class PeerNode extends Node{
 			reply.unmarshall(bytes);
 
 			// Heard back for FingerTable entry, update state
-			state.parseState(reply);
+			state.parseState(reply, this);
 
 			break;
 
@@ -363,6 +363,8 @@ public class PeerNode extends Node{
 
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
+			pred.setLink(connect(pred));
+			pred.initLink();
 			state.addPredecessor(pred,false);
 
 			break;
@@ -373,11 +375,13 @@ public class PeerNode extends Node{
 			predResp.unmarshall(bytes);
 
 			Peer p = new Peer(predResp.hostName, predResp.port, predResp.id);
+			p.setLink(connect(p));
+			p.initLink();
 			state.addPredecessor(p, false);
 
 			if (state.successor.id != state.predecessor.id) {
 				SuccessorRequest sucReq = new SuccessorRequest(hostname, port, id);
-				Link successorLink = connect(p);
+				Link successorLink = p.link; 
 				successorLink.sendData(sucReq.marshall());
 			}
 
@@ -389,6 +393,8 @@ public class PeerNode extends Node{
 			sReq.unmarshall(bytes);
 
 			Peer sucessor = new Peer(sReq.hostName, sReq.port, sReq.id);
+			sucessor.setLink(connect(sucessor));
+			sucessor.initLink();
 			state.addSucessor(sucessor, false);
 
 			break;
@@ -398,6 +404,8 @@ public class PeerNode extends Node{
 			predLeaving.unmarshall(bytes);
 
 			Peer newPred = new Peer(predLeaving.hostName, predLeaving.port, predLeaving.id);
+			newPred.setLink(connect(newPred));
+			newPred.initLink();
 			state.addPredecessor(newPred,true);
 
 			break;
@@ -407,6 +415,8 @@ public class PeerNode extends Node{
 			sucLeaving.unmarshall(bytes);
 
 			Peer newSuc = new Peer(sucLeaving.hostName, sucLeaving.port, sucLeaving.id);
+			newSuc.setLink(connect(newSuc));
+			newSuc.initLink();
 			state.addSucessor(newSuc, true);
 
 			break;
