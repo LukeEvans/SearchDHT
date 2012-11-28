@@ -1,5 +1,6 @@
 package cs555.dht.node;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import cs555.dht.communications.Link;
@@ -23,6 +24,7 @@ import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
 import cs555.search.common.AccessPoint;
+import cs555.search.common.Word;
 import cs555.search.common.WordSet;
 
 public class PeerNode extends Node{
@@ -40,6 +42,8 @@ public class PeerNode extends Node{
 	DataList dataList;
 
 	RefreshThread refreshThread;
+	
+	WordSet words;
 
 	//================================================================================
 	// Constructor
@@ -62,6 +66,8 @@ public class PeerNode extends Node{
 		refreshThread = new RefreshThread(this, refreshTime);
 
 		dataList = new DataList();
+		
+		words = new WordSet();
 	}
 
 	//================================================================================
@@ -75,6 +81,23 @@ public class PeerNode extends Node{
 		refreshThread.start();
 	}
 
+	//================================================================================
+	// Send
+	//================================================================================
+	public void sendData(Peer p, byte[] bytes) {
+		try {
+			p.sendData(bytes);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendObject(Peer p, Object o) {
+		sendData(p, Tools.objectToBytes(o));
+	}
+	
+	
 	//================================================================================
 	// Enter DHT
 	//================================================================================
@@ -226,6 +249,22 @@ public class PeerNode extends Node{
 	}
 
 	//================================================================================
+	// Handle incoming words
+	//================================================================================
+	public void handleWord(Word word) {
+		// If the word is mine, add it to our word list
+		if (state.itemIsMine(word.hash)) {
+			System.out.println("My id : " + id + " word id: " + word.hash);
+		}
+		
+		else {
+			Peer nextPeer = state.getNexClosestPeer(word.hash);
+			Link nextHop = connect(nextPeer);
+			nextHop.sendData(Tools.objectToBytes(word));
+		}
+	}
+	
+	//================================================================================
 	// Receive
 	//================================================================================
 	// Receieve data
@@ -238,9 +277,20 @@ public class PeerNode extends Node{
 			WordSet words = (WordSet) obj;
 			System.out.println("Got words set: " + words);
 
+			for (Word word : words.words) {
+				handleWord(word);
+			}
+			
 			return;
 		}
 
+		if (obj != null && obj instanceof Word) {
+			Word word = (Word) obj;
+			
+			handleWord(word);
+			
+			return;
+		}
 		switch (messageType) {
 		case Constants.lookup_request:
 
