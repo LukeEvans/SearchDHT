@@ -22,6 +22,7 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
+import cs555.search.common.WordSet;
 
 public class PeerNode extends Node{
 
@@ -230,6 +231,15 @@ public class PeerNode extends Node{
 	public synchronized void receive(byte[] bytes, Link l){
 		int messageType = Tools.getMessageType(bytes);
 
+		Object obj = Tools.bytesToObject(bytes);
+		
+		if (obj != null && obj instanceof WordSet) {
+			WordSet words = (WordSet) obj;
+			System.out.println("Got words set");
+			
+			return;
+		}
+		
 		switch (messageType) {
 		case Constants.lookup_request:
 
