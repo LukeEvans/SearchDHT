@@ -38,4 +38,6 @@ public class Constants {
 	
 	// Base path for data to be stored
 	public static final String base_path = "/tmp/evansl/dhtData/";
+	
+	public static final int Refresh_Time = 120;
 }

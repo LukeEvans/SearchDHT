@@ -403,7 +403,7 @@ public class PeerNode extends Node{
 		int discoveryPort = 0;
 		int localPort = 0;
 		int id = -1;
-		int refreshTime = 30;
+		int refreshTime = Constants.Refresh_Time;
 
 		if (args.length >= 3) {
 			discoveryHost = args[0];
