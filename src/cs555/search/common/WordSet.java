@@ -23,7 +23,7 @@ public class WordSet implements Serializable {
 	// Modifiers
 	//================================================================================
 	public void addWord(Word w) {
-		int wordIndex = indexOf(w);
+		int wordIndex = indexOfWord(w);
 		
 		if (wordIndex > -1) {
 			words.get(wordIndex).addSearchSet(w.searchSet);
@@ -44,13 +44,13 @@ public class WordSet implements Serializable {
 	//================================================================================
 	// House Keeping
 	//================================================================================
-	public boolean contains(Word other) {
-		return indexOf(other) > -1;
-	}
+//	public boolean contains(Word other) {
+//		return indexOf(other) > -1;
+//	}
 	
-	public int indexOf(Word other) {
+	public int indexOfWord(Word other) {
 		for (int i=0; i<words.size(); i++) {
-			if (words.get(i).equals(other)) {
+			if (words.get(i).isSameAs(other)) {
 				return i;
 			}
 		}
