@@ -10,8 +10,9 @@ public class Word implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-    public String word;
+	public String word;
 	public ArrayList<Search> searchSet;
+	public int hash;
 	
 	//================================================================================
 	// Constructors
@@ -19,6 +20,7 @@ public class Word implements Serializable {
 	public Word(String w) {
 		word = w;
 		searchSet = new ArrayList<Search>();
+		hash = -1;
 	}
 	
 	//================================================================================
@@ -27,11 +29,14 @@ public class Word implements Serializable {
 	public void addSearch(Search search) {
 		int searchIndex = indexOf(search);
 		
+		if (searchSet.size() > 5) {
+			return;
+		}
+		
 		// If we already have this url, keep the maximum of the two
 		if (searchIndex > -1) {
 			if (search.pageScore > searchSet.get(searchIndex).pageScore) {
-				searchSet.remove(searchIndex);
-				searchSet.add(search);
+				searchSet.get(searchIndex).pageScore = search.pageScore;
 			}
 		}
 		
@@ -92,12 +97,18 @@ public class Word implements Serializable {
 		return false;
 	}
 	
-//	public String toString() {
-//		String s = "";
-//		
-//		s += "Word: " + word + " link set size: " + searchSet.size() + "\n";
-//		
-//		return s;
-//	}
+	public String toString() {
+		String s = "";
+		
+		if (searchSet.size() > 0) {
+			s += "Word: " + word + " : " + searchSet.get(0);
+		}
+		
+		else {
+			s += "Word: " + word + " link set size: " + searchSet.size() + "\n";
+		}
+		
+		return s;
+	}
 }
 

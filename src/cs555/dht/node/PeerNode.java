@@ -236,13 +236,7 @@ public class PeerNode extends Node{
 
 		if (obj != null && obj instanceof WordSet) {
 			WordSet words = (WordSet) obj;
-			System.out.println("Got words set");
-
-			return;
-		}
-
-		if (obj != null && obj instanceof AccessPoint) {
-			System.out.println("Got access pong");
+			System.out.println("Got words set: " + words);
 
 			return;
 		}
