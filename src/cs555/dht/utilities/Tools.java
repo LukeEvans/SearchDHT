@@ -19,34 +19,35 @@ public class Tools {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		try {
-		  out = new ObjectOutputStream(bos);   
-		  out.writeObject(o);
-		  byte[] bytes = bos.toByteArray();
-		  
-		  out.close();
-		  bos.close();
-		  
-		  return bytes;
-		  
+			out = new ObjectOutputStream(bos);   
+			out.writeObject(o);
+			byte[] bytes = bos.toByteArray();
+
+			out.close();
+			bos.close();
+
+			return bytes;
+
 		} catch(IOException e) {
 			System.out.println("Could not create bytes from object");
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public static Object bytesToObject(byte[] bytes) {
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		ObjectInput in = null;
+
 		try {
-		  in = new ObjectInputStream(bis);
-		  Object o = in.readObject(); 
-		  
-		  bis.close();
-		  in.close();
-		  
-		  return o;
-		  
+			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+			ObjectInput in = null;
+			in = new ObjectInputStream(bis);
+			Object o = in.readObject(); 
+
+			bis.close();
+			in.close();
+
+			return o;
+
 		} catch(Exception e) {
 			//System.out.println("Could not create object from bytes");
 			return null;
@@ -200,7 +201,7 @@ public class Tools {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 
 	}
 
@@ -209,7 +210,7 @@ public class Tools {
 		int current = 0;
 
 		path = Constants.base_path + path;
-		
+
 		try {
 			System.out.println("Connecting...");
 			// receive file
@@ -247,25 +248,25 @@ public class Tools {
 	public static void removeFile(String fileName) {
 		File f = new File(fileName);
 
-	    // Make sure the file or directory exists and isn't write protected
-	    if (!f.exists())
-	      throw new IllegalArgumentException(
-	          "Delete: no such file or directory: " + fileName);
+		// Make sure the file or directory exists and isn't write protected
+		if (!f.exists())
+			throw new IllegalArgumentException(
+					"Delete: no such file or directory: " + fileName);
 
-	    if (!f.canWrite())
-	      throw new IllegalArgumentException("Delete: write protected: "
-	          + fileName);
+		if (!f.canWrite())
+			throw new IllegalArgumentException("Delete: write protected: "
+					+ fileName);
 
-	    // If it is a directory, make sure it is empty
-	    if (f.isDirectory()) {
-	      String[] files = f.list();
-	      if (files.length > 0)
-	        throw new IllegalArgumentException(
-	            "Delete: directory not empty: " + fileName);
-	    }
+		// If it is a directory, make sure it is empty
+		if (f.isDirectory()) {
+			String[] files = f.list();
+			if (files.length > 0)
+				throw new IllegalArgumentException(
+						"Delete: directory not empty: " + fileName);
+		}
 
-	    // Attempt to delete it
-	    f.delete();
+		// Attempt to delete it
+		f.delete();
 	}
 
 	//================================================================================
