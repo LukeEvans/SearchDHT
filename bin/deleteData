@@ -2,11 +2,13 @@
 
 cmd="rm /tmp/evansl/searchData/*"
 
-ssh chard $cmd &
-ssh corn $cmd &
-ssh garlic $cmd &
-ssh kale $cmd &
-ssh kelp $cmd &
-ssh leek $cmd &
-ssh okra $cmd &
-ssh onion $cmd &
+ssh beet $cmd &    
+ssh cabbage $cmd &
+ssh carot $cmd &   
+ssh celery $cmd &
+ssh fennel $cmd &
+ssh garlic $cmd &   
+ssh lettuce $cmd & 
+ssh parsley $cmd &
+ssh pepper $cmd & 
+ssh radish $cmd &
