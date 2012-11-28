@@ -314,12 +314,11 @@ public class Tools {
 
 	// Generates hash
 	public static int generateHash() {
+		
 		// Timestamp
 		long epoch = System.currentTimeMillis()/1000;
-		generateHash(String.valueOf(epoch));
-
-		return generateHash(String.valueOf(epoch));
-
+		int h = generateHash(String.valueOf(epoch));
+		return Constants.hashes.get(h % Constants.hashes.size());
 	}
 
 	// Generate hash of String

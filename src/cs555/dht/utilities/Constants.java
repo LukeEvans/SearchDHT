@@ -1,5 +1,8 @@
 package cs555.dht.utilities;
 
+import java.util.Arrays;
+import java.util.List;
+
 // Constants for message types
 public class Constants {
 
@@ -42,4 +45,6 @@ public class Constants {
 	public static final int Refresh_Time = 120;
 	
 	public static final boolean logging = false;
+	
+	public static final List<Integer> hashes = Arrays.asList(0,6554,13107,19661,26215,32768,39323,45877,52431,58985);
 }
