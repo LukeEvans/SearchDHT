@@ -283,7 +283,11 @@ public class PeerNode extends Node{
 				}
 
 				lookup.hopCount++;
-				System.out.println("Routing query from " + lookup);
+				
+				if (Constants.logging) {
+					System.out.println("Routing query from " + lookup);
+				}
+				
 				nextHop.sendData(lookup.marshall());
 			}
 
