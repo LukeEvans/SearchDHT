@@ -275,6 +275,7 @@ public class PeerNode extends Node{
 
 		if (obj != null && obj instanceof WordSet) {
 			WordSet words = (WordSet) obj;
+			
 			System.out.println("Got words set: " + words);
 
 			for (Word word : words.words) {
