@@ -22,6 +22,7 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
+import cs555.search.common.AccessPoint;
 import cs555.search.common.WordSet;
 
 public class PeerNode extends Node{
@@ -233,10 +234,19 @@ public class PeerNode extends Node{
 
 		Object obj = Tools.bytesToObject(bytes);
 		
+		if (obj == null) {
+			System.out.println("null object");
+		}
+		
 		if (obj != null && obj instanceof WordSet) {
 			WordSet words = (WordSet) obj;
 			System.out.println("Got words set");
 			
+			return;
+		}
+		
+		if (obj != null && obj instanceof AccessPoint) {
+			System.out.println("Got an access point");
 			return;
 		}
 		
