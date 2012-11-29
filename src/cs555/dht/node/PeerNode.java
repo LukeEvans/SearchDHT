@@ -228,7 +228,7 @@ public class PeerNode extends Node{
 
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
 		//Link sucessorLink = p.link; 
-		p.initLink();
+		//p.initLink();
 		p.link.sendData(r.marshall());
 	}
 
