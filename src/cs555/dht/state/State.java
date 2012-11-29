@@ -1,10 +1,11 @@
 package cs555.dht.state;
 
+import java.util.ArrayList;
+
 import cs555.dht.node.PeerNode;
 import cs555.dht.peer.*;
 import cs555.dht.utilities.Constants;
 import cs555.dht.wireformats.*;
-import cs555.dht.wireformats.PredessesorRequest;
 
 public class State {
 	public Peer successor;
@@ -29,6 +30,19 @@ public class State {
 	}
 
 
+	//================================================================================
+	// Accessor
+	//================================================================================
+	public ArrayList<Peer> getTable() {
+		ArrayList<Peer> table = new ArrayList<Peer>();
+		
+		for (Peer p : fingerTable.table) {
+			table.add(p);
+		}
+		
+		return table;
+	}
+	
 	//================================================================================
 	// State manipulation
 	//================================================================================

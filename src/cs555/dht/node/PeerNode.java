@@ -28,7 +28,9 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
+import cs555.search.common.SeedSet;
 import cs555.search.common.WaitForObject;
+import cs555.search.common.Word;
 import cs555.search.common.WordSet;
 
 public class PeerNode extends Node{
@@ -48,6 +50,8 @@ public class PeerNode extends Node{
 	RefreshThread refreshThread;
 
 	WordSet intermediarySet;
+	
+	WordSet searchWords;
 
 	//================================================================================
 	// Constructor
@@ -71,6 +75,7 @@ public class PeerNode extends Node{
 
 		dataList = new DataList();
 
+		searchWords = new WordSet();
 	}
 
 	//================================================================================
@@ -146,6 +151,54 @@ public class PeerNode extends Node{
 		}
 	}
 
+	//================================================================================
+	// Seeding Methods
+	//================================================================================
+	public void seedDHT() {
+		if (intermediarySet == null) {
+			return;
+		}
+		
+		ArrayList<Peer> peers = state.getTable();
+		
+		for (Peer p : peers) {
+			p.setLink(connect(p));
+		}
+		
+		
+		for (Word word : intermediarySet.words) {
+			word.hash = Tools.generateHash();
+			try {
+				handleWord(word, peers);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void handleWord(Word word, ArrayList<Peer> peers) throws IOException {
+		
+		WaitForObject wait = new WaitForObject();
+		
+		if (state.itemIsMine(word.hash)) {
+			searchWords.addWord(word);
+		}
+		
+		else {
+			Peer next = state.getNexClosestPeer(word.hash);
+			
+			// Find the peer in the links we've already connected to
+			for (Peer p : peers) {
+				if (p.equals(next)) {
+					p.sendData(Tools.objectToBytes(wait));
+					p.sendData(Tools.objectToBytes(word));
+				}
+			}
+		}
+		
+	}
+	
 	public void readIntermediaryFromDisk() {
 		File folder = new File(Constants.base_path);
 
@@ -288,6 +341,39 @@ public class PeerNode extends Node{
 		sucessorLink.sendData(r.marshall());
 	}
 
+	public void handleSeeds(SeedSet set) {
+		// If we got our own seed set, return
+		if (set.hash == id) {
+			return;
+		}
+		
+		if (set.hash == -1) {
+			set.hash = id;
+		}
+		
+		int i=0;
+		// Go through each word, and add the ones we need
+		for (Word w : set.wordSet.words) {
+			if (state.itemIsMine(w.hash)) {
+				searchWords.addWord(w);
+				i++;
+				System.out.println("Added Words from seed set : " + i);
+				
+			}
+		}
+		
+		// Forward to our successor
+		Link successorLink = connect(state.successor);
+		
+		System.out.println("Sending wait for object");
+		WaitForObject wait = new WaitForObject();
+		successorLink.sendData(Tools.objectToBytes(wait));
+		Tools.sleep(2);
+		Tools.writeObject(successorLink, set);
+		System.out.println("Sent set to " + successorLink.remoteHost);
+		successorLink.close();
+	}
+	
 	//================================================================================
 	// Transfer data
 	//================================================================================
@@ -332,6 +418,13 @@ public class PeerNode extends Node{
 				
 				System.out.println("Saveing to file..."); 
 				saveIntermediaryToDisk();
+			}
+			
+			else if (data instanceof SeedSet) {
+				SeedSet seeds = (SeedSet) data;
+				System.out.println("Got a seed set from " + l.remoteHost);
+				l.close();
+				handleSeeds(seeds);
 			}
 
 			return;
@@ -546,6 +639,10 @@ public class PeerNode extends Node{
 				cont = false;
 				System.exit(0);
 
+			}
+			
+			if (input.equalsIgnoreCase("seed")) {
+				peer.seedDHT();
 			}
 		}
 	}

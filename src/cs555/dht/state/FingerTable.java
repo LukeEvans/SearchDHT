@@ -7,7 +7,7 @@ import cs555.dht.wireformats.LookupRequest;
 
 public class FingerTable {
 
-	Peer table[];
+	public Peer table[];
 	int id;
 	PeerNode node;
 	int size;
