@@ -517,7 +517,7 @@ public class PeerNode extends Node{
 		// Make query
 		for (String s : queryParts) {
 			System.out.println("Searching for word : " + s);
-			Query query = new Query(s.trim(), Tools.generateHash(q));
+			Query query = new Query(s.trim(), Tools.generateHash(s));
 			Word item = handleQuery(query, null);
 			results.add(item);
 			System.out.println("one word down : " + item);
