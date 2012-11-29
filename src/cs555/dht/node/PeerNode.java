@@ -310,6 +310,8 @@ public class PeerNode extends Node{
 		switch (messageType) {
 		case Constants.lookup_request:
 
+			System.out.println("Got lookup req from : " + l.remoteHost);
+			
 			LookupRequest lookup = new LookupRequest();
 			lookup.unmarshall(bytes);
 
