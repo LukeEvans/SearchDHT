@@ -175,13 +175,13 @@ public class State {
 
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
-			peer.setLink(link);
+			peer.setLink(n.connect(peer));
 			peer.initLink();
 			addSucessor(peer, false);
 		}
 
 		else {
-			peer.setLink(n.connect(peer));
+			peer.setLink(link);
 		}
 		
 		fingerTable.addEntry(l.ftEntry, peer);
