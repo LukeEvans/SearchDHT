@@ -230,24 +230,24 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Receieve data
 	public synchronized void receive(byte[] bytes, Link l){
-		
+
 		// Word Seeding Messages
 		Object obj = Tools.bytesToObject(bytes);
-		
+
 		if (obj != null && obj instanceof WaitForObject) {
 			System.out.println("Waiting for object");
 			Object data = Tools.readObject(l);
-			
+
 			if (data instanceof WordSet) {
 				WordSet set = (WordSet) data;
-				
+
 				System.out.println("Got a wordie birdi set: " + set);
 				System.out.println("Test Word : " + set.words.get(199));
 			}
-			
+
 			return;
 		}
-		
+
 		// DHT Messages
 		int messageType = Tools.getMessageType(bytes);
 
@@ -287,7 +287,9 @@ public class PeerNode extends Node{
 				}
 
 				lookup.hopCount++;
-				System.out.println("Routing query from " + lookup);
+				if (Constants.logging) {
+					System.out.println("Routing query from " + lookup);
+				}
 				nextHop.sendData(lookup.marshall());
 			}
 
@@ -397,10 +399,12 @@ public class PeerNode extends Node{
 	// Diagnostics
 	//================================================================================
 	public void printDiagnostics() {
-		System.out.println("\n================================================================================");
-		System.out.println(state);
-		System.out.println(dataList);
-		System.out.println("================================================================================\n");
+		if (Constants.logging) {
+			System.out.println("\n================================================================================");
+			System.out.println(state);
+			System.out.println(dataList);
+			System.out.println("================================================================================\n");
+		}
 	}
 
 	//================================================================================
