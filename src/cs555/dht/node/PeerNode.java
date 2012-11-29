@@ -225,7 +225,8 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
 //		Link lookupPeer = p.link; 
-		System.out.println("Sending lookup");
+		System.out.println("Sending lookup to peer: " + p.hostname);
+		System.out.println("Lookup : " + l);
 		p.link.sendData(l.marshall());
 	}
 
@@ -311,11 +312,12 @@ public class PeerNode extends Node{
 		switch (messageType) {
 		case Constants.lookup_request:
 
-			System.out.println("Got lookup req from : " + l.remoteHost);
-			
 			LookupRequest lookup = new LookupRequest();
 			lookup.unmarshall(bytes);
 
+			System.out.println("Got lookup req from : " + l.remoteHost);
+			System.out.println("Lookup : " + lookup);
+			
 			// Info about the lookup
 			int resolveID = lookup.resolveID;
 			String requesterHost = lookup.hostName;
