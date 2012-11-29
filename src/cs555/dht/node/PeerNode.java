@@ -436,6 +436,9 @@ public class PeerNode extends Node{
 			set.hash = id;
 		}
 		
+		if (searchWords == null) {
+			searchWords = new WordSet();
+		}
 		
 		int i=0;
 		// Go through each word, and add the ones we need
