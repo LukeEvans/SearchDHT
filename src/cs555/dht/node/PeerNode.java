@@ -159,6 +159,10 @@ public class PeerNode extends Node{
 			return;
 		}
 		
+		for (Word w : intermediarySet.words) {
+			w.hash = Tools.generateHash(w.word);
+		}
+		
 		System.out.println("Seeding : " + intermediarySet);
 		SeedSet seeds = new SeedSet(intermediarySet);
 		handleSeeds(seeds);
