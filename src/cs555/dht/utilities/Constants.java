@@ -40,7 +40,7 @@ public class Constants {
 	public static final int Id_Space = 16;
 	
 	// Base path for data to be stored
-	public static final String base_path = "/tmp/evansl/dhtData/";
+	public static final String base_path = "/tmp/evansl/dhtData/search/";
 	
 	public static final int Refresh_Time = 46;
 	

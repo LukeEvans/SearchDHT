@@ -1,5 +1,11 @@
 package cs555.dht.node;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import cs555.dht.communications.Link;
@@ -41,6 +47,8 @@ public class PeerNode extends Node{
 
 	RefreshThread refreshThread;
 
+	WordSet intermediarySet;
+
 	//================================================================================
 	// Constructor
 	//================================================================================
@@ -62,6 +70,8 @@ public class PeerNode extends Node{
 		refreshThread = new RefreshThread(this, refreshTime);
 
 		dataList = new DataList();
+
+		intermediarySet = new WordSet();
 	}
 
 	//================================================================================
@@ -129,8 +139,82 @@ public class PeerNode extends Node{
 			break;
 		}	
 
+		// Try reading intermediary set from file
+		readIntermediaryFromDisk();
+		if (intermediarySet != null) {
+			System.out.println("I am a seeder");
+			System.out.println("Seeding : " + intermediarySet);
+		}
 	}
 
+	public void readIntermediaryFromDisk() {
+		File folder = new File(Constants.base_path);
+
+		for (File fileEntry : folder.listFiles()) {
+			if (fileEntry.exists() && fileEntry.isFile()) {
+				String fileString = fileEntry.getName();
+
+				System.out.println("file String : " + fileString);
+
+				if (fileString.endsWith(".intermediary")) {
+
+
+					// Read an object
+					Object obj;
+					try {
+						// Read from disk using FileInputStream
+						FileInputStream f_in = new FileInputStream(fileEntry.getAbsolutePath());
+
+						// Read object using ObjectInputStream
+						ObjectInputStream obj_in = new ObjectInputStream (f_in);
+
+						obj = obj_in.readObject();
+
+						if (obj instanceof WordSet) {
+							// Cast object to a State
+							intermediarySet = (WordSet) obj;
+							System.out.println("Read Intermediary : " + intermediarySet);
+
+							break;
+						}
+
+						else {
+							System.out.println("State could not be read from file");
+						}
+
+						obj_in.close();
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	public void saveIntermediaryToDisk()  {
+
+		// Write to disk with FileOutputStream
+		FileOutputStream f_out;
+		try {
+			f_out = new FileOutputStream(Constants.base_path + Tools.getLocalHostname() + ".results");
+			// Write object with ObjectOutputStream
+			ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
+
+			// Write object out to disk
+			obj_out.writeObject (intermediarySet);
+
+			obj_out.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 	//================================================================================
 	// Exit CDN
 	//================================================================================
@@ -239,10 +323,13 @@ public class PeerNode extends Node{
 			Object data = Tools.readObject(l);
 
 			if (data instanceof WordSet) {
-				WordSet set = (WordSet) data;
+				intermediarySet = (WordSet) data;
 
-				System.out.println("Got a wordie birdi set: " + set);
-				System.out.println("Test Word : " + set.words.get(199));
+				System.out.println("Got a wordie birdi set: " + intermediarySet);
+				System.out.println("Test Word : " + intermediarySet.words.get(199));
+				
+				System.out.println("Saveing to file..."); 
+				saveIntermediaryToDisk();
 			}
 
 			return;
