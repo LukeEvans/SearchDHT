@@ -736,6 +736,10 @@ public class PeerNode extends Node{
 			if (input.equalsIgnoreCase("seed")) {
 				peer.seedDHT();
 			}
+			
+			else if (input.equalsIgnoreCase("save")) {
+				peer.saveWords();
+			}
 		}
 	}
 }
