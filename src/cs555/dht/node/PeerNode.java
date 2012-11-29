@@ -132,6 +132,10 @@ public class PeerNode extends Node{
 			LookupRequest lookupReq = new LookupRequest(hostname, port, id, id, 0);
 			Peer poc = new Peer(accessPoint.hostName, accessPoint.port, accessPoint.id);
 			Link accessLink = connect(poc);
+			if (accessLink == null) {
+				System.out.println("Null:  " + accessPoint.hostName + ":" + accessPoint.port);
+			}
+			
 			accessLink.sendData(lookupReq.marshall());
 			break;
 
