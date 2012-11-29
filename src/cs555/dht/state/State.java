@@ -24,7 +24,7 @@ public class State {
 		Peer thisPeer = new Peer(myself.hostname, myself.port, thisID);
 		successor = thisPeer;
 		predecessor = thisPeer;
-		
+
 		fingerTable = new FingerTable(thisID,myself);
 	}
 
@@ -38,12 +38,12 @@ public class State {
 		if (force) {
 			return true;
 		}
-		
+
 		if (successor != null) {
 			if (successor.id == p.id) {
 				return false;
 			}
-			
+
 			if (p.id == thisID) {
 				return false;
 			}
@@ -75,11 +75,13 @@ public class State {
 		if (!shouldAddNewSuccessor(p, force)) {
 			return;
 		}
-		
+
 		successor = p;
 
-		System.out.println("Is it still the same? : " + successor.link.remoteHost);
-		
+		if (successor.link != null) {
+			System.out.println("Is it still the same? : " + successor.link.remoteHost);
+		}
+
 		fingerTable.fillTableWith(successor);
 
 		// Send predecesor request if, we're not the only one
@@ -93,7 +95,7 @@ public class State {
 			// Our successor changed, update finger table
 			update();
 		}
-		
+
 		else {
 			myself.printDiagnostics();
 		}
@@ -106,11 +108,11 @@ public class State {
 		if (force) {
 			return true;
 		}
-		
+
 		if (p.id == thisID) {
 			return false;
 		}
-		
+
 		if (predecessor != null) {
 			if (predecessor.id == p.id) {
 				return false;
@@ -140,7 +142,7 @@ public class State {
 		if (successor.id == thisID) {
 			addSucessor(p, false);
 		}
-		
+
 		// Move relevant data items 
 		myself.transferDataToPredesessor();
 	}
@@ -162,7 +164,7 @@ public class State {
 	public void update() {
 		PredessesorRequest req = new PredessesorRequest(myself.hostname, myself.port, myself.id);
 		myself.sendPredessessorRequest(successor, req);
-		
+
 		fingerTable.buildFingerTable();
 	}
 
@@ -170,9 +172,9 @@ public class State {
 	public void parseState(LookupRequest l, Node n) {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
 		peer.setLink(n.connect(peer));
-		
+
 		System.out.println("Added link : " + peer.hostname + " ?= " + peer.link.remoteHost);
-		
+
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
 			addSucessor(peer, false);
@@ -186,7 +188,7 @@ public class State {
 	// Resolving
 	//================================================================================
 	public boolean itemIsMine(int h) {
-		
+
 		// Same side of ring
 		if ((h > predecessor.id) && h <= thisID) {
 			return true;
@@ -220,20 +222,20 @@ public class State {
 		return fingerTable.getNextClosest(h);
 	}
 
-	
+
 	//================================================================================
 	// Error handling
 	//================================================================================
 	public Peer getNextSuccessor() {
 		Peer p = fingerTable.getNextSuccessor();
 		addPredecessor(p, true);
-		
+
 		// Rebuild finger table
 		fingerTable.buildFingerTable();
-		
+
 		return p;
 	}
-	
+
 	//================================================================================
 	// House keeping
 	//================================================================================
