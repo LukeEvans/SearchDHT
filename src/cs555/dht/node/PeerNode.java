@@ -301,6 +301,8 @@ public class PeerNode extends Node{
 					idString = idString.replace(Tools.getLocalHostname()+"-", "");
 					id = Integer.parseInt(idString);
 					
+					System.out.println("ID:  : " + idString);
+					
 					// Read an object
 					Object obj;
 					try {
