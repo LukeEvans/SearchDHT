@@ -344,6 +344,8 @@ public class PeerNode extends Node{
 		// Go through each word, and add the ones we need
 		for (Word w : set.wordSet.words) {
 			if (state.itemIsMine(w.hash)) {
+				System.out.println("ID : " + id);
+				System.out.println("Hash : " + w.hash);
 				searchWords.addWord(w);
 				i++;
 				
