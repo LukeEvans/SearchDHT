@@ -71,7 +71,6 @@ public class PeerNode extends Node{
 
 		dataList = new DataList();
 
-		intermediarySet = new WordSet();
 	}
 
 	//================================================================================
