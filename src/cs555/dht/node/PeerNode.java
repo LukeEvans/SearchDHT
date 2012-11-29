@@ -22,6 +22,8 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
+import cs555.search.common.WaitForObject;
+import cs555.search.common.WordSet;
 
 public class PeerNode extends Node{
 
@@ -228,6 +230,25 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Receieve data
 	public synchronized void receive(byte[] bytes, Link l){
+		
+		// Word Seeding Messages
+		Object obj = Tools.bytesToObject(bytes);
+		
+		if (obj != null && obj instanceof WaitForObject) {
+			System.out.println("Waiting for object");
+			Object data = Tools.readObject(l);
+			
+			if (data instanceof WordSet) {
+				WordSet set = (WordSet) data;
+				
+				System.out.println("Got a wordie birdi set: " + set);
+				System.out.println("Test Word : " + set.words.get(199));
+			}
+			
+			return;
+		}
+		
+		// DHT Messages
 		int messageType = Tools.getMessageType(bytes);
 
 		switch (messageType) {

@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import cs555.dht.communications.Link;
+
 // Functions used all over the program. Handy location
 public class Tools {
 
@@ -50,6 +52,29 @@ public class Tools {
 
 		} catch(Exception e) {
 			//System.out.println("Could not create object from bytes");
+			return null;
+		}
+	}
+	
+	public static void writeObject(Link link, Object o) {
+		ObjectOutputStream objOut;
+		try {
+			objOut = new ObjectOutputStream(createOutputStream(link.socket));
+			objOut.writeObject(o);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static Object readObject(Link link) {
+		try {
+			ObjectInputStream objIn = new ObjectInputStream(createInput(link.socket));
+			return objIn.readObject();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return null;
 		}
 	}

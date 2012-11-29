@@ -23,10 +23,6 @@ public class WordSet implements Serializable {
 	// Modifiers
 	//================================================================================
 	public void addWord(Word w) {
-		words.add(w);
-	}
-	
-	public void tallyWord(Word w) {
 		int wordIndex = indexOfWord(w);
 		
 		if (wordIndex > -1) {
@@ -36,7 +32,8 @@ public class WordSet implements Serializable {
 		
 		else {
 			words.add(w);
-		}	
+		}
+		
 	}
 	
 	public void addWordSet(WordSet wordSet) {
