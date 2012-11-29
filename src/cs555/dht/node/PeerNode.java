@@ -98,7 +98,7 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Send
 	//================================================================================
-	public void sendData(Link l, byte[] bytes) {
+	public void sendData(Peer p, byte[] bytes) {
 //		try {
 //			p.sendData(bytes);
 //		} catch (IOException e) {
@@ -106,12 +106,12 @@ public class PeerNode extends Node{
 //			e.printStackTrace();
 //		}
 		
-		SendTask sender = new SendTask(l, bytes);
+		SendTask sender = new SendTask(connect(p), bytes);
 		poolManager.execute(sender);
 	}
 	
 	public void sendObject(Peer p, Object o) {
-		sendData(p.link, Tools.objectToBytes(o));
+		sendData(p, Tools.objectToBytes(o));
 	}
 	
 	
@@ -148,17 +148,9 @@ public class PeerNode extends Node{
 
 			LookupRequest lookupReq = new LookupRequest(hostname, port, id, id, 0);
 			Peer poc = new Peer(accessPoint.hostName, accessPoint.port, accessPoint.id);
-			poc.setLink(connect(poc));
-			poc.initLink();
+						
+			sendData(poc, lookupReq.marshall());
 			
-			System.out.println("Got POC : " + poc.hostname);
-			
-//			Link accessLink = connect(poc);
-//			if (accessLink == null) {
-//				System.out.println("Null:  " + accessPoint.hostName + ":" + accessPoint.port);
-//			}
-			
-			poc.link.sendData(lookupReq.marshall());
 			break;
 
 		case Constants.Payload:
@@ -247,7 +239,7 @@ public class PeerNode extends Node{
 		
 		//Link link = connect(p);
 		//link.sendData(l.marshall());
-		sendData(connect(p), l.marshall());
+		sendData(p, l.marshall());
 		//p.link.sendData(l.marshall());
 	}
 
@@ -351,8 +343,9 @@ public class PeerNode extends Node{
 
 				LookupResponse response = new LookupResponse(hostname, port, id, resolveID, entry);
 				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
-				Link requesterLink = connect(requester);
-				requesterLink.sendData(response.marshall());
+				//Link requesterLink = connect(requester);
+				sendData(requester, response.marshall());
+				//requesterLink.sendData(response.marshall());
 
 				//l.sendData(response.marshall());
 			}
@@ -361,12 +354,12 @@ public class PeerNode extends Node{
 			else {
 
 				Peer nextPeer = state.getNexClosestPeer(resolveID);
-				Link nextHop = nextPeer.link; 
+				//Link nextHop = nextPeer.link; 
 
-				if (nextHop == null) {
-					state.update();
-					return;
-				}
+//				if (nextHop == null) {
+//					state.update();
+//					return;
+//				}
 
 				lookup.hopCount++;
 				
@@ -374,7 +367,8 @@ public class PeerNode extends Node{
 					System.out.println("Routing query from " + lookup);
 				}
 				
-				nextHop.sendData(lookup.marshall());
+				sendData(nextPeer, lookup.marshall());
+				//nextHop.sendData(lookup.marshall());
 			}
 
 			break;
@@ -385,7 +379,7 @@ public class PeerNode extends Node{
 			reply.unmarshall(bytes);
 
 			// Heard back for FingerTable entry, update state
-			state.parseState(reply, this, l);
+			state.parseState(reply);
 
 			break;
 
@@ -399,11 +393,12 @@ public class PeerNode extends Node{
 			
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
-			pred.setLink(connect(pred));
+			sendData(pred, oldPred.marshall());
+			//pred.setLink(connect(pred));
 //			pred.initLink();
 //			pred.setLink(l);
 			
-			pred.link.sendData(oldPred.marshall());
+			//pred.link.sendData(oldPred.marshall());
 			state.addPredecessor(pred,false);
 
 			break;
@@ -414,15 +409,16 @@ public class PeerNode extends Node{
 			predResp.unmarshall(bytes);
 			
 			Peer p = new Peer(predResp.hostName, predResp.port, predResp.id);
-			p.setLink(connect(p));
-			p.initLink();
+			//p.setLink(connect(p));
+			//p.initLink();
 			state.addPredecessor(p, false);
 
 			if (state.successor.id != state.predecessor.id) {
 				System.out.println("Sending successor req");
 				SuccessorRequest sucReq = new SuccessorRequest(hostname, port, id);
-				Link successorLink = p.link; 
-				successorLink.sendData(sucReq.marshall());
+				sendData(p, sucReq.marshall());
+				//Link successorLink = p.link; 
+				//successorLink.sendData(sucReq.marshall());
 			}
 
 			break;
@@ -435,8 +431,8 @@ public class PeerNode extends Node{
 			System.out.println("Got sucessor req");
 			
 			Peer sucessor = new Peer(sReq.hostName, sReq.port, sReq.id);
-			sucessor.setLink(connect(sucessor));
-			sucessor.initLink();
+			//sucessor.setLink(connect(sucessor));
+			//sucessor.initLink();
 			state.addSucessor(sucessor, false);
 
 			break;
@@ -446,8 +442,8 @@ public class PeerNode extends Node{
 			predLeaving.unmarshall(bytes);
 
 			Peer newPred = new Peer(predLeaving.hostName, predLeaving.port, predLeaving.id);
-			newPred.setLink(connect(newPred));
-			newPred.initLink();
+			//newPred.setLink(connect(newPred));
+			//newPred.initLink();
 			state.addPredecessor(newPred,true);
 
 			break;
@@ -457,8 +453,8 @@ public class PeerNode extends Node{
 			sucLeaving.unmarshall(bytes);
 
 			Peer newSuc = new Peer(sucLeaving.hostName, sucLeaving.port, sucLeaving.id);
-			newSuc.setLink(connect(newSuc));
-			newSuc.initLink();
+			//newSuc.setLink(connect(newSuc));
+			//newSuc.initLink();
 			state.addSucessor(newSuc, true);
 
 			break;

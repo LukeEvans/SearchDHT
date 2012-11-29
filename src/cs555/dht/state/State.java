@@ -170,17 +170,14 @@ public class State {
 	}
 
 	// Decide where to put this peer in Finger Table
-	public void parseState(LookupRequest l, Node n, Link link) {
+	public void parseState(LookupRequest l) {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
-		peer.setLink(n.connect(peer));
+		
+		//peer.setLink(n.connect(peer));
 
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
 			addSucessor(peer, false);
-		}
-
-		else {
-			peer.setLink(link);
 		}
 		
 		fingerTable.addEntry(l.ftEntry, peer);
