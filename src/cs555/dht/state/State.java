@@ -176,6 +176,7 @@ public class State {
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
 			peer.setLink(link);
+			peer.initLink();
 			addSucessor(peer, false);
 		}
 
