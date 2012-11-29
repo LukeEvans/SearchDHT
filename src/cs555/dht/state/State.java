@@ -76,6 +76,8 @@ public class State {
 			return;
 		}
 
+		System.out.println("Added new successor : " + p.hostname);
+		
 		successor = p;
 
 		fingerTable.fillTableWith(successor);
@@ -131,6 +133,8 @@ public class State {
 		if (!shouldAddNewPredecessor(p, force)) {		
 			return;
 		}
+		
+		System.out.println("Added new predecessor : " + p.hostname);
 
 		predecessor = p;
 
