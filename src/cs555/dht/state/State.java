@@ -169,6 +169,8 @@ public class State {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
 		peer.setLink(n.connect(peer));
 		
+		System.out.println("Added link : " + peer.hostname + " ?= " + peer.link.remoteHost);
+		
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
 			addSucessor(peer, false);
