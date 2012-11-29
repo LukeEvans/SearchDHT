@@ -371,6 +371,8 @@ public class PeerNode extends Node{
 
 		case Constants.Predesessor_Request:
 			
+			System.out.println("Got pred req");
+			
 			PredessesorRequest predReq = new PredessesorRequest();
 			predReq.unmarshall(bytes);
 
