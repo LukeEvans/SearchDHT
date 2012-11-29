@@ -632,7 +632,7 @@ public class PeerNode extends Node{
 		
 		else if (obj instanceof Query) {
 			Query query = (Query) obj;
-			System.out.println("Got query word : " + query.queryWord);
+			System.out.println("Got query word :" + query.queryWord + ": hash: " + query.queryHash);
 			handleQuery(query, l);
 			
 			return;
