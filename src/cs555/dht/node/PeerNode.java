@@ -329,10 +329,11 @@ public class PeerNode extends Node{
 			if (state.itemIsMine(resolveID)) {
 
 				LookupResponse response = new LookupResponse(hostname, port, id, resolveID, entry);
-//				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
-//				Link requesterLink = connect(requester);
+				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
+				Link requesterLink = connect(requester);
+				requesterLink.sendData(response.marshall());
 
-				l.sendData(response.marshall());
+				//l.sendData(response.marshall());
 			}
 
 			// Else, pass it along
