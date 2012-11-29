@@ -379,8 +379,9 @@ public class PeerNode extends Node{
 			
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
-			pred.setLink(connect(pred));
-			pred.initLink();
+//			pred.setLink(connect(pred));
+//			pred.initLink();
+			pred.setLink(l);
 			state.addPredecessor(pred,false);
 
 			break;
