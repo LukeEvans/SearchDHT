@@ -90,7 +90,7 @@ public class State {
 			
 			// Tell our new successor that we're it's predecessor
 			PredessesorRequest req = new PredessesorRequest(myself.hostname, myself.port, myself.id);
-			myself.sendPredessessorRequest(successor, req);
+			//myself.sendPredessessorRequest(successor, req);
 
 			// Add successor to FT[0]
 			fingerTable.addEntry(0, successor);
