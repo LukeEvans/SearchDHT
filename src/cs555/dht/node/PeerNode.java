@@ -542,6 +542,8 @@ public class PeerNode extends Node{
 		// Else, Pass it along
 		else {
 			Link next = connect(state.getNexClosestPeer(q.queryHash));
+			System.out.println("Passing " + q.queryWord + " along to : " + next.remoteHost);
+			
 			next.sendData(Tools.objectToBytes(q));
 			// Wait for word from next
 			Object obj = Tools.readObject(next);
@@ -605,13 +607,14 @@ public class PeerNode extends Node{
 				l.close();
 				handleSeeds(seeds);
 			}
-
-			else if (data instanceof Query) {
-				Query query = (Query) data;
-				System.out.println("Got query word : " + query.queryWord);
-				handleQuery(query, l);
-				
-			}
+			
+			return;
+		}
+		
+		else if (obj instanceof Query) {
+			Query query = (Query) obj;
+			System.out.println("Got query word : " + query.queryWord);
+			handleQuery(query, l);
 			
 			return;
 		}
