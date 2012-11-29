@@ -105,8 +105,6 @@ public class FingerTable {
 	public void addEntry(int location, Peer p) {
 		table[location] = p;
 		size++;
-
-		System.out.println("Size : " + size);
 		
 		if (size == Constants.Id_Space) {
 			node.printDiagnostics();
