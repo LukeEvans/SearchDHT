@@ -134,6 +134,8 @@ public class PeerNode extends Node{
 			poc.setLink(connect(poc));
 			poc.initLink();
 			
+			System.out.println("Got POC : " + poc.hostname);
+			
 //			Link accessLink = connect(poc);
 //			if (accessLink == null) {
 //				System.out.println("Null:  " + accessPoint.hostName + ":" + accessPoint.port);
@@ -223,7 +225,6 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
 //		Link lookupPeer = p.link; 
-		p.initLink();
 		p.link.sendData(l.marshall());
 	}
 
@@ -305,6 +306,7 @@ public class PeerNode extends Node{
 			
 			return;
 		}
+		
 		switch (messageType) {
 		case Constants.lookup_request:
 
