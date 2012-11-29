@@ -78,6 +78,8 @@ public class State {
 		
 		successor = p;
 
+		System.out.println("Is it still the same? : " + successor.link.remoteHost);
+		
 		fingerTable.fillTableWith(successor);
 
 		// Send predecesor request if, we're not the only one
