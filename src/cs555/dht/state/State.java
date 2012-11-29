@@ -85,12 +85,9 @@ public class State {
 		// Send predecesor request if, we're not the only one
 		if (successor.id != thisID) {
 			
-			System.out.println("Successor ID : " + successor.id);
-			System.out.println("My id : " + thisID);
-			
 			// Tell our new successor that we're it's predecessor
 			PredessesorRequest req = new PredessesorRequest(myself.hostname, myself.port, myself.id);
-			//myself.sendPredessessorRequest(successor, req);
+			myself.sendPredessessorRequest(successor, req);
 
 			// Add successor to FT[0]
 			fingerTable.addEntry(0, successor);
@@ -138,8 +135,6 @@ public class State {
 			return;
 		}
 		
-		System.out.println("Added new predecessor : " + p.hostname);
-
 		predecessor = p;
 
 		// If our successor is ourself, and p as our successor as well
@@ -176,8 +171,6 @@ public class State {
 	public void parseState(LookupRequest l, Node n) {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
 		peer.setLink(n.connect(peer));
-
-		System.out.println("Added link for " + l.ftEntry + ": " + peer.hostname + " ?= " + peer.link.remoteHost);
 
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {

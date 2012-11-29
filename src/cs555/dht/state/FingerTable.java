@@ -37,7 +37,6 @@ public class FingerTable {
 				resolve = resolve % ((int) Math.pow(2, Constants.Id_Space));
 			}
 
-			System.out.println("table 0 : " + table[0].link.remoteHost);
 			LookupRequest req = new LookupRequest(node.hostname, node.port, node.id, resolve, i);
 			node.sendLookup(table[0], req);
 		}
