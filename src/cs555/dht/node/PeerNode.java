@@ -225,8 +225,8 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
 //		Link lookupPeer = p.link; 
-		//System.out.println("Sending lookup to peer: " + p.link.remoteHost);
-		//System.out.println("Lookup : " + l);
+		System.out.println("Sending lookup to peer: " + p.link.remoteHost);
+		System.out.println("Lookup : " + l);
 		p.link.sendData(l.marshall());
 	}
 
@@ -389,7 +389,6 @@ public class PeerNode extends Node{
 
 		case Constants.Predesessor_Response:
 
-			System.out.println("Got pred resp");
 			PredessesorResponse predResp = new PredessesorResponse();
 			predResp.unmarshall(bytes);
 			
