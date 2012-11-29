@@ -29,6 +29,7 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
+import cs555.search.common.Query;
 import cs555.search.common.SeedSet;
 import cs555.search.common.WaitForObject;
 import cs555.search.common.Word;
@@ -488,7 +489,92 @@ public class PeerNode extends Node{
 			Tools.sendFile(d.filename, link.socket);
 		}
 	}
-
+	
+	//================================================================================
+	// Query
+	//================================================================================
+	public void searchDHT(String q) {
+		String[] queryParts = q.split(" ");
+		ArrayList<Word> results = new ArrayList<Word>();
+		
+		// Make query
+		for (String s : queryParts) {
+			System.out.println("Searching for word : " + s);
+			Query query = new Query(s, Tools.generateHash(q));
+			results.add(handleQuery(query, null));
+		}
+		
+		// Print 
+		for (Word w : results) {
+			System.out.println("Got result : " + w);
+		}
+		
+		
+	}
+	
+	public Word handleQuery(Query q, Link previous) {
+		
+		Word word = null; 
+		
+		// If the query belongs to me, reply with the word
+		if (state.itemIsMine(q.queryHash)) {
+			System.out.println("Word is mine: " + q.queryWord);
+			word = getQueryWord(q.queryWord);
+			
+			if (word != null) {
+				
+				if (previous == null) {
+					return word;
+				}
+				
+				System.out.println("Sending word back");
+				Tools.writeObject(previous, word);
+			}
+			
+			else {
+				System.out.println(q.queryWord + " not found. Send back blank");
+				Word blank = new Word("-_-Blank-_-");
+				Tools.writeObject(previous, blank);
+			}
+			
+		}
+		
+		// Else, Pass it along
+		else {
+			Link next = connect(state.getNexClosestPeer(q.queryHash));
+			next.sendData(Tools.objectToBytes(q));
+			// Wait for word from next
+			Object obj = Tools.readObject(next);
+			
+			if (obj instanceof Word) {
+				word = (Word) obj;
+				
+				if (previous == null) {
+					return word;
+				}
+			}
+			
+			Tools.writeObject(previous, obj);
+			
+			// Close links
+			next.close();
+			previous.close();
+			
+		}
+		
+		return word;
+	}
+	
+	public Word getQueryWord(String word) {
+		for  (Word w : searchWords.words) {
+			if (w.word.equalsIgnoreCase(word)) {
+				return w;
+			}
+		}
+		
+		return null;
+	}
+	
 	//================================================================================
 	// Receive
 	//================================================================================
@@ -520,6 +606,13 @@ public class PeerNode extends Node{
 				handleSeeds(seeds);
 			}
 
+			else if (data instanceof Query) {
+				Query query = (Query) data;
+				System.out.println("Got query word : " + query.queryWord);
+				handleQuery(query, l);
+				
+			}
+			
 			return;
 		}
 
@@ -740,6 +833,10 @@ public class PeerNode extends Node{
 			
 			else if (input.equalsIgnoreCase("save")) {
 				peer.saveWords();
+			}
+			
+			else {
+				peer.searchDHT(input);
 			}
 		}
 	}
