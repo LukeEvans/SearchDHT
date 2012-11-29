@@ -359,6 +359,7 @@ public class PeerNode extends Node{
 
 		case Constants.lookup_reply:
 
+			System.out.println("Got a reply");
 			LookupResponse reply = new LookupResponse();
 			reply.unmarshall(bytes);
 
