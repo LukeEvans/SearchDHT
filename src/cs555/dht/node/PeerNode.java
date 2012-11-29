@@ -95,6 +95,12 @@ public class PeerNode extends Node{
 	// Enter DHT
 	//================================================================================
 	public void enterDHT(String dHost, int dPort) {
+		// Try reading search words from disk
+		readWordResultsFromDisk();
+		if (searchWords != null) {
+			System.out.println("Read words from disk: " + searchWords);
+		}
+		
 		managerLink = connect(new Peer(dHost, dPort));
 		RegisterRequest regiserReq = new RegisterRequest(hostname, port, id);
 		managerLink.sendData(regiserReq.marshall());
@@ -152,11 +158,6 @@ public class PeerNode extends Node{
 			System.out.println("Seeding : " + intermediarySet);
 		}
 		
-		// Try reading search words from disk
-		readWordResultsFromDisk();
-		if (searchWords != null) {
-			System.out.println("Read words from disk: " + searchWords);
-		}
 	}
 
 	//================================================================================
@@ -293,9 +294,13 @@ public class PeerNode extends Node{
 
 				System.out.println("file String : " + fileString);
 
+				
 				if (fileString.endsWith(".words")) {
 
-
+					String idString = fileString.replace(".words", "");
+					idString = idString.replace(Tools.getLocalHostname()+"-", "");
+					id = Integer.parseInt(idString);
+					
 					// Read an object
 					Object obj;
 					try {
@@ -338,7 +343,7 @@ public class PeerNode extends Node{
 		// Write to disk with FileOutputStream
 		FileOutputStream f_out;
 		try {
-			f_out = new FileOutputStream(Constants.base_path + Tools.getLocalHostname() + ".words");
+			f_out = new FileOutputStream(Constants.base_path + Tools.getLocalHostname() + "-" + id + ".words");
 			// Write object with ObjectOutputStream
 			ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
 
