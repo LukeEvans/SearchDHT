@@ -385,9 +385,9 @@ public class PeerNode extends Node{
 			pred.setLink(connect(pred));
 //			pred.initLink();
 //			pred.setLink(l);
-			state.addPredecessor(pred,false);
 			
 			pred.link.sendData(oldPred.marshall());
+			state.addPredecessor(pred,false);
 
 			break;
 
