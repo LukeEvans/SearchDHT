@@ -6,8 +6,6 @@ import cs555.dht.communications.Link;
 import cs555.dht.data.DataItem;
 import cs555.dht.data.DataList;
 import cs555.dht.peer.Peer;
-import cs555.dht.pool.SendTask;
-import cs555.dht.pool.ThreadPoolManager;
 import cs555.dht.state.RefreshThread;
 import cs555.dht.state.State;
 import cs555.dht.utilities.*;
@@ -24,9 +22,6 @@ import cs555.dht.wireformats.SuccessorLeaving;
 import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
-import cs555.search.common.Continue;
-import cs555.search.common.Word;
-import cs555.search.common.WordSet;
 
 public class PeerNode extends Node{
 
@@ -43,13 +38,7 @@ public class PeerNode extends Node{
 	DataList dataList;
 
 	RefreshThread refreshThread;
-	
-	WordSet words;
-	
-	ThreadPoolManager poolManager;
 
-	Link successorLink;
-	
 	//================================================================================
 	// Constructor
 	//================================================================================
@@ -71,10 +60,6 @@ public class PeerNode extends Node{
 		refreshThread = new RefreshThread(this, refreshTime);
 
 		dataList = new DataList();
-		
-		words = new WordSet();
-		
-		poolManager = new ThreadPoolManager(4);
 	}
 
 	//================================================================================
@@ -86,37 +71,8 @@ public class PeerNode extends Node{
 
 		// Start thread for refreshing hash
 		refreshThread.start();
-		
-		poolManager.start();
 	}
 
-	public synchronized void setSuccessorLink(Peer peer) {
-		successorLink = null;
-		successorLink = connect(peer);
-	}
-	
-	//================================================================================
-	// Send
-	//================================================================================
-	public void sendData(Peer p, byte[] bytes) {
-//		try {
-//			p.sendData(bytes);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-//		SendTask sender = new SendTask(connect(p), bytes);
-//		poolManager.execute(sender);
-		
-		connect(p).sendData(bytes);
-	}
-	
-	public void sendObject(Peer p, Object o) {
-		sendData(p, Tools.objectToBytes(o));
-	}
-	
-	
 	//================================================================================
 	// Enter DHT
 	//================================================================================
@@ -187,12 +143,12 @@ public class PeerNode extends Node{
 
 		// Tell our successor we're leaving
 		PredessesorLeaving predLeaving = new PredessesorLeaving(state.predecessor.hostname, state.predecessor.port, state.predecessor.id);
-		Link successorLink = state.successor.link; 
+		Link successorLink = connect(state.successor);
 		successorLink.sendData(predLeaving.marshall());
 
 		// Tell our predessor we're leaving
 		SuccessorLeaving sucLeaving = new SuccessorLeaving(state.successor.hostname, state.successor.port, state.successor.id);
-		Link predLink = state.predecessor.link;
+		Link predLink = connect(state.predecessor);
 		predLink.sendData(sucLeaving.marshall());
 
 		// Pass all data to our successor
@@ -234,21 +190,14 @@ public class PeerNode extends Node{
 	// Send
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
-//		Link lookupPeer = p.link; 
-		//System.out.println("Sending lookup to peer: " + p.link.remoteHost);
-		//System.out.println("Lookup : " + l);
-		
-		//Link link = connect(p);
-		//link.sendData(l.marshall());
-		sendData(p, l.marshall());
-		//p.link.sendData(l.marshall());
+		Link lookupPeer = connect(p);
+		lookupPeer.sendData(l.marshall());
 	}
 
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
-		//Link sucessorLink = p.link; 
-		//p.initLink();
-		sendData(p, r.marshall());
-		//p.link.sendData(r.marshall());
+		Link sucessorLink = connect(p);
+		sucessorLink.initLink();
+		sucessorLink.sendData(r.marshall());
 	}
 
 	//================================================================================
@@ -256,10 +205,10 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void transferData(DataItem d, Peer p) {
 
-		Link link = p.link;
+		Link link = connect(p);
 
 		if (link == null){
-			link = state.getNextSuccessor().link;
+			link = connect(state.getNextSuccessor());
 
 		}
 
@@ -275,55 +224,12 @@ public class PeerNode extends Node{
 	}
 
 	//================================================================================
-	// Handle incoming words
-	//================================================================================
-	public void handleWord(Word word) {
-		// If the word is mine, add it to our word list
-		if (state.itemIsMine(word.hash)) {
-			//System.out.println("My id : " + id + " word id: " + word.hash);
-			words.tallyWord(word);
-		}
-		
-		else {
-			Peer nextPeer = state.getNexClosestPeer(word.hash);
-			Link nextHop = nextPeer.link; 
-			nextHop.sendData(Tools.objectToBytes(word));
-		}
-	}
-	
-	//================================================================================
 	// Receive
 	//================================================================================
 	// Receieve data
 	public synchronized void receive(byte[] bytes, Link l){
 		int messageType = Tools.getMessageType(bytes);
 
-		Object obj = Tools.bytesToObject(bytes);
-
-		if (obj != null && obj instanceof WordSet) {
-			WordSet words = (WordSet) obj;
-			
-			System.out.println("Got words set: " + words);
-
-			for (Word word : words.words) {
-				word.hash = Tools.generateHash(word.word);
-				handleWord(word);
-			}
-			
-			Continue processed = new Continue("continue");
-			l.sendData(Tools.objectToBytes(processed));
-			
-			return;
-		}
-
-		if (obj != null && obj instanceof Word) {
-			Word word = (Word) obj;
-			
-			handleWord(word);
-			
-			return;
-		}
-		
 		switch (messageType) {
 		case Constants.lookup_request:
 
@@ -470,19 +376,10 @@ public class PeerNode extends Node{
 	// Diagnostics
 	//================================================================================
 	public void printDiagnostics() {
-		if (Constants.logging) {
-			System.out.println("\n================================================================================");
-			System.out.println(state);
-			System.out.println(dataList);
-			System.out.println("================================================================================\n");
-		}
-	}
-	
-	public void printWordSet() {
 		System.out.println("\n================================================================================");
-		System.out.println(" : " + words);
+		System.out.println(state);
+		System.out.println(dataList);
 		System.out.println("================================================================================\n");
-		
 	}
 
 	//================================================================================
@@ -496,7 +393,7 @@ public class PeerNode extends Node{
 		int discoveryPort = 0;
 		int localPort = 0;
 		int id = -1;
-		int refreshTime = Constants.Refresh_Time;
+		int refreshTime = 30;
 
 		if (args.length >= 3) {
 			discoveryHost = args[0];
@@ -535,10 +432,6 @@ public class PeerNode extends Node{
 				cont = false;
 				System.exit(0);
 
-			}
-			
-			if (input.equalsIgnoreCase("words")) {
-				peer.printWordSet();
 			}
 		}
 	}
