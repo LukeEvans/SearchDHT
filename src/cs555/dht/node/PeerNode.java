@@ -329,9 +329,6 @@ public class PeerNode extends Node{
 			LookupRequest lookup = new LookupRequest();
 			lookup.unmarshall(bytes);
 
-			//System.out.println("Got lookup req from : " + l.remoteHost);
-			//System.out.println("Lookup : " + lookup);
-			
 			// Info about the lookup
 			int resolveID = lookup.resolveID;
 			String requesterHost = lookup.hostName;
@@ -344,32 +341,26 @@ public class PeerNode extends Node{
 
 				LookupResponse response = new LookupResponse(hostname, port, id, resolveID, entry);
 				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
-				//Link requesterLink = connect(requester);
-				sendData(requester, response.marshall());
-				//requesterLink.sendData(response.marshall());
+				Link requesterLink = connect(requester);
 
-				//l.sendData(response.marshall());
+				requesterLink.sendData(response.marshall());
 			}
 
 			// Else, pass it along
 			else {
 
+				//System.out.println("is not mine : " + resolveID);
 				Peer nextPeer = state.getNexClosestPeer(resolveID);
-				//Link nextHop = nextPeer.link; 
+				Link nextHop = connect(nextPeer);
 
-//				if (nextHop == null) {
-//					state.update();
-//					return;
-//				}
+				if (nextHop == null) {
+					state.update();
+					return;
+				}
 
 				lookup.hopCount++;
-				
-				if (Constants.logging) {
-					System.out.println("Routing query from " + lookup);
-				}
-				
-				sendData(nextPeer, lookup.marshall());
-				//nextHop.sendData(lookup.marshall());
+				System.out.println("Routing query from " + lookup);
+				nextHop.sendData(lookup.marshall());
 			}
 
 			break;
@@ -385,21 +376,15 @@ public class PeerNode extends Node{
 			break;
 
 		case Constants.Predesessor_Request:
-						
+
 			PredessesorRequest predReq = new PredessesorRequest();
 			predReq.unmarshall(bytes);
 
 			PredessesorResponse oldPred = new PredessesorResponse(state.predecessor.hostname, state.predecessor.port, state.predecessor.id);
-			//l.sendData(oldPred.marshall());
-			
+			l.sendData(oldPred.marshall());
+
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
-			sendData(pred, oldPred.marshall());
-			//pred.setLink(connect(pred));
-//			pred.initLink();
-//			pred.setLink(l);
-			
-			//pred.link.sendData(oldPred.marshall());
 			state.addPredecessor(pred,false);
 
 			break;
@@ -408,18 +393,14 @@ public class PeerNode extends Node{
 
 			PredessesorResponse predResp = new PredessesorResponse();
 			predResp.unmarshall(bytes);
-			
+
 			Peer p = new Peer(predResp.hostName, predResp.port, predResp.id);
-			//p.setLink(connect(p));
-			//p.initLink();
 			state.addPredecessor(p, false);
 
 			if (state.successor.id != state.predecessor.id) {
-				System.out.println("Sending successor req");
 				SuccessorRequest sucReq = new SuccessorRequest(hostname, port, id);
-				sendData(p, sucReq.marshall());
-				//Link successorLink = p.link; 
-				//successorLink.sendData(sucReq.marshall());
+				Link successorLink = connect(p);
+				successorLink.sendData(sucReq.marshall());
 			}
 
 			break;
@@ -429,11 +410,7 @@ public class PeerNode extends Node{
 			SuccessorRequest sReq = new SuccessorRequest();
 			sReq.unmarshall(bytes);
 
-			System.out.println("Got sucessor req");
-			
 			Peer sucessor = new Peer(sReq.hostName, sReq.port, sReq.id);
-			//sucessor.setLink(connect(sucessor));
-			//sucessor.initLink();
 			state.addSucessor(sucessor, false);
 
 			break;
@@ -443,8 +420,6 @@ public class PeerNode extends Node{
 			predLeaving.unmarshall(bytes);
 
 			Peer newPred = new Peer(predLeaving.hostName, predLeaving.port, predLeaving.id);
-			//newPred.setLink(connect(newPred));
-			//newPred.initLink();
 			state.addPredecessor(newPred,true);
 
 			break;
@@ -454,8 +429,6 @@ public class PeerNode extends Node{
 			sucLeaving.unmarshall(bytes);
 
 			Peer newSuc = new Peer(sucLeaving.hostName, sucLeaving.port, sucLeaving.id);
-			//newSuc.setLink(connect(newSuc));
-			//newSuc.initLink();
 			state.addSucessor(newSuc, true);
 
 			break;
@@ -486,7 +459,7 @@ public class PeerNode extends Node{
 			break;
 
 		default:
-			//System.out.println("Unrecognized Message : " + messageType);
+			System.out.println("Unrecognized Message : " + messageType);
 			break;
 		}
 	}
