@@ -339,6 +339,7 @@ public class PeerNode extends Node{
 			set.hash = id;
 		}
 		
+		
 		int i=0;
 		// Go through each word, and add the ones we need
 		for (Word w : set.wordSet.words) {
@@ -413,6 +414,7 @@ public class PeerNode extends Node{
 			else if (data instanceof SeedSet) {
 				SeedSet seeds = (SeedSet) data;
 				System.out.println("Got a seed set from " + l.remoteHost);
+				System.out.println("Word Set : " + seeds.wordSet);
 				l.close();
 				handleSeeds(seeds);
 			}
