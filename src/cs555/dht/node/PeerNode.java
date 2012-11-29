@@ -317,7 +317,7 @@ public class PeerNode extends Node{
 						if (obj instanceof WordSet) {
 							// Cast object to a State
 							searchWords = (WordSet) obj;
-							System.out.println("Read Words : " + intermediarySet);
+							//System.out.println("Read Words : " + intermediarySet);
 
 							break;
 						}

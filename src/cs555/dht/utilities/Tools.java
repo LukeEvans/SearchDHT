@@ -347,7 +347,9 @@ public class Tools {
 	}
 
 	// Generate hash of String
-	public static int generateHash(String item) {
+	public static int generateHash(String s) {
+		String item = s.toLowerCase();
+		
 		int bitsToTake = Constants.Id_Space / 4;
 
 		String itemMD5 = md5(item);
