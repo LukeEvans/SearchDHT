@@ -247,7 +247,7 @@ public class PeerNode extends Node{
 		
 		//Link link = connect(p);
 		//link.sendData(l.marshall());
-		sendData(successorLink, l.marshall());
+		sendData(connect(p), l.marshall());
 		//p.link.sendData(l.marshall());
 	}
 
