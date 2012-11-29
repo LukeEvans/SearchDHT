@@ -232,7 +232,6 @@ public class PeerNode extends Node{
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
 		//Link sucessorLink = p.link; 
 		//p.initLink();
-		System.out.println("Saying we're the new predecessor");
 		p.link.sendData(r.marshall());
 	}
 
@@ -331,14 +330,12 @@ public class PeerNode extends Node{
 //				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
 //				Link requesterLink = connect(requester);
 
-				System.out.println("Sending back that it's me");
 				l.sendData(response.marshall());
 			}
 
 			// Else, pass it along
 			else {
 
-				System.out.println("Not me");
 				//System.out.println("is not mine : " + resolveID);
 				Peer nextPeer = state.getNexClosestPeer(resolveID);
 				Link nextHop = nextPeer.link; 
@@ -371,8 +368,6 @@ public class PeerNode extends Node{
 			break;
 
 		case Constants.Predesessor_Request:
-
-			System.out.println("Got a pred req");
 			
 			PredessesorRequest predReq = new PredessesorRequest();
 			predReq.unmarshall(bytes);
