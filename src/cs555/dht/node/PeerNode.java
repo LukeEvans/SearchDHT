@@ -533,6 +533,7 @@ public class PeerNode extends Node{
 		
 		for (int i=1; i<results.size(); i++) {
 			ArrayList<Search> searches = first.getIntersection(results.get(i));
+			System.out.println("Found this many in common : " + searches.size());
 			first.searchSet = searches;
 		}
 		
