@@ -150,9 +150,8 @@ public class PeerNode extends Node{
 
 			LookupRequest lookupReq = new LookupRequest(hostname, port, id, id, 0);
 			Peer poc = new Peer(accessPoint.hostName, accessPoint.port, accessPoint.id);
-						
-			sendData(poc, lookupReq.marshall());
-			
+			Link accessLink = connect(poc);
+			accessLink.sendData(lookupReq.marshall());
 			break;
 
 		case Constants.Payload:
