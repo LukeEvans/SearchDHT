@@ -200,7 +200,7 @@ public class PeerNode extends Node{
 		// Write to disk with FileOutputStream
 		FileOutputStream f_out;
 		try {
-			f_out = new FileOutputStream(Constants.base_path + Tools.getLocalHostname() + ".results");
+			f_out = new FileOutputStream(Constants.base_path + Tools.getLocalHostname() + ".intermediary");
 			// Write object with ObjectOutputStream
 			ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
 
