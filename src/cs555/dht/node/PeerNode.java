@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import cs555.dht.communications.Link;
 import cs555.dht.data.DataItem;
@@ -75,7 +76,7 @@ public class PeerNode extends Node{
 
 		dataList = new DataList();
 
-		searchWords = new WordSet();
+		//searchWords = new WordSet();
 	}
 
 	//================================================================================
@@ -149,6 +150,12 @@ public class PeerNode extends Node{
 			System.out.println("I am a seeder");
 			System.out.println("Seeding : " + intermediarySet);
 		}
+		
+		// Try reading search words from disk
+		readWordResultsFromDisk();
+		if (searchWords != null) {
+			System.out.println("Read words from disk: " + searchWords);
+		}
 	}
 
 	//================================================================================
@@ -166,6 +173,21 @@ public class PeerNode extends Node{
 		System.out.println("Seeding : " + intermediarySet);
 		SeedSet seeds = new SeedSet(intermediarySet);
 		handleSeeds(seeds);
+	}
+	
+	public void saveWords() {
+		if (searchWords == null) {
+			return;
+		}
+		
+		// Sorting
+		System.out.println("Sorting...");
+		for (Word w : searchWords.words) {
+			Collections.sort(w.searchSet);
+		}
+		
+		// Save
+		saveWordResultsToDisk();
 	}
 	
 	public void handleWord(Word word, ArrayList<Peer> peers) throws IOException {
@@ -258,6 +280,77 @@ public class PeerNode extends Node{
 		}
 
 	}
+	
+	
+	public void readWordResultsFromDisk() {
+		File folder = new File(Constants.base_path);
+
+		for (File fileEntry : folder.listFiles()) {
+			if (fileEntry.exists() && fileEntry.isFile()) {
+				String fileString = fileEntry.getName();
+
+				System.out.println("file String : " + fileString);
+
+				if (fileString.endsWith(".words")) {
+
+
+					// Read an object
+					Object obj;
+					try {
+						// Read from disk using FileInputStream
+						FileInputStream f_in = new FileInputStream(fileEntry.getAbsolutePath());
+
+						// Read object using ObjectInputStream
+						ObjectInputStream obj_in = new ObjectInputStream (f_in);
+
+						obj = obj_in.readObject();
+
+						if (obj instanceof WordSet) {
+							// Cast object to a State
+							searchWords = (WordSet) obj;
+							System.out.println("Read Words : " + intermediarySet);
+
+							break;
+						}
+
+						else {
+							System.out.println("Words could not be read from file");
+						}
+
+						obj_in.close();
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	public void saveWordResultsToDisk()  {
+
+		// Write to disk with FileOutputStream
+		FileOutputStream f_out;
+		try {
+			f_out = new FileOutputStream(Constants.base_path + Tools.getLocalHostname() + ".words");
+			// Write object with ObjectOutputStream
+			ObjectOutputStream obj_out = new ObjectOutputStream (f_out);
+
+			// Write object out to disk
+			obj_out.writeObject (searchWords);
+
+			obj_out.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	//================================================================================
 	// Exit CDN
 	//================================================================================
@@ -348,8 +441,6 @@ public class PeerNode extends Node{
 		// Go through each word, and add the ones we need
 		for (Word w : set.wordSet.words) {
 			if (state.itemIsMine(w.hash)) {
-				System.out.println("ID : " + id);
-				System.out.println("Hash : " + w.hash);
 				searchWords.addWord(w);
 				i++;
 				
