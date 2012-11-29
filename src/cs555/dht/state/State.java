@@ -79,8 +79,10 @@ public class State {
 
 		System.out.println("Added new successor : " + p.hostname);
 		
+		myself.setSuccessorLink(p);
 		successor = p;
 
+		
 		fingerTable.fillTableWith(successor);
 
 		// Send predecesor request if, we're not the only one

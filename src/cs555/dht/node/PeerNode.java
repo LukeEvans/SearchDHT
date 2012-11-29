@@ -1,6 +1,5 @@
 package cs555.dht.node;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import cs555.dht.communications.Link;
@@ -49,6 +48,8 @@ public class PeerNode extends Node{
 	
 	ThreadPoolManager poolManager;
 
+	Link successorLink;
+	
 	//================================================================================
 	// Constructor
 	//================================================================================
@@ -89,10 +90,15 @@ public class PeerNode extends Node{
 		poolManager.start();
 	}
 
+	public synchronized void setSuccessorLink(Peer peer) {
+		successorLink = null;
+		successorLink = connect(peer);
+	}
+	
 	//================================================================================
 	// Send
 	//================================================================================
-	public void sendData(Peer p, byte[] bytes) {
+	public void sendData(Link l, byte[] bytes) {
 //		try {
 //			p.sendData(bytes);
 //		} catch (IOException e) {
@@ -100,12 +106,12 @@ public class PeerNode extends Node{
 //			e.printStackTrace();
 //		}
 		
-		SendTask sender = new SendTask(p, bytes);
+		SendTask sender = new SendTask(l, bytes);
 		poolManager.execute(sender);
 	}
 	
 	public void sendObject(Peer p, Object o) {
-		sendData(p, Tools.objectToBytes(o));
+		sendData(p.link, Tools.objectToBytes(o));
 	}
 	
 	
@@ -241,7 +247,7 @@ public class PeerNode extends Node{
 		
 		//Link link = connect(p);
 		//link.sendData(l.marshall());
-		sendData(p, l.marshall());
+		sendData(successorLink, l.marshall());
 		//p.link.sendData(l.marshall());
 	}
 

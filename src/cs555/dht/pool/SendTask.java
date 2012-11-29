@@ -2,28 +2,23 @@ package cs555.dht.pool;
 
 import java.io.IOException;
 
-import cs555.dht.peer.Peer;
+import cs555.dht.communications.Link;
 
 public class SendTask implements Task {
 
-	Peer peer;
+	Link link;
 	byte[] dataToSend;
 
 	//================================================================================
 	// Constructor
 	//================================================================================
-	public SendTask(Peer p, byte[] d) {
-		peer = p;
+	public SendTask(Link l, byte[] d) {
+		link = l;
 		dataToSend = d;
 	}
 
-	public void run() {		
-		try {
-			peer.sendData(dataToSend);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void run() {				
+		link.sendData(dataToSend);
 	}
 
 	@Override
