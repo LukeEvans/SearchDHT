@@ -106,8 +106,10 @@ public class PeerNode extends Node{
 //			e.printStackTrace();
 //		}
 		
-		SendTask sender = new SendTask(connect(p), bytes);
-		poolManager.execute(sender);
+//		SendTask sender = new SendTask(connect(p), bytes);
+//		poolManager.execute(sender);
+		
+		connect(p).sendData(bytes);
 	}
 	
 	public void sendObject(Peer p, Object o) {
