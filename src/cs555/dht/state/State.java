@@ -84,6 +84,10 @@ public class State {
 
 		// Send predecesor request if, we're not the only one
 		if (successor.id != thisID) {
+			
+			System.out.println("Successor ID : " + successor.id);
+			System.out.println("My id : " + thisID);
+			
 			// Tell our new successor that we're it's predecessor
 			PredessesorRequest req = new PredessesorRequest(myself.hostname, myself.port, myself.id);
 			myself.sendPredessessorRequest(successor, req);
