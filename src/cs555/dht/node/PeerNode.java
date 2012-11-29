@@ -187,6 +187,7 @@ public class PeerNode extends Node{
 		}
 		
 		// Save
+		System.out.println("Saving...");
 		saveWordResultsToDisk();
 	}
 	
