@@ -253,7 +253,10 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void updateFT() {
 		// Ensure accuracy of Finger Table
-		state.update();
+		
+		if (state != null) {
+			state.update();
+		}
 	}
 
 	public void transferDataToPredesessor() {
