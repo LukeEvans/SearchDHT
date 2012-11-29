@@ -231,6 +231,7 @@ public class PeerNode extends Node{
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
 		//Link sucessorLink = p.link; 
 		//p.initLink();
+		System.out.println("Saying we're the new predecessor");
 		p.link.sendData(r.marshall());
 	}
 
@@ -370,6 +371,8 @@ public class PeerNode extends Node{
 
 		case Constants.Predesessor_Request:
 
+			System.out.println("Got a pred req");
+			
 			PredessesorRequest predReq = new PredessesorRequest();
 			predReq.unmarshall(bytes);
 
