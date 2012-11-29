@@ -7,6 +7,8 @@ import cs555.dht.communications.Link;
 import cs555.dht.data.DataItem;
 import cs555.dht.data.DataList;
 import cs555.dht.peer.Peer;
+import cs555.dht.pool.SendTask;
+import cs555.dht.pool.ThreadPoolManager;
 import cs555.dht.state.RefreshThread;
 import cs555.dht.state.State;
 import cs555.dht.utilities.*;
@@ -44,6 +46,8 @@ public class PeerNode extends Node{
 	RefreshThread refreshThread;
 	
 	WordSet words;
+	
+	ThreadPoolManager poolManager;
 
 	//================================================================================
 	// Constructor
@@ -68,6 +72,8 @@ public class PeerNode extends Node{
 		dataList = new DataList();
 		
 		words = new WordSet();
+		
+		poolManager = new ThreadPoolManager(4);
 	}
 
 	//================================================================================
@@ -79,18 +85,23 @@ public class PeerNode extends Node{
 
 		// Start thread for refreshing hash
 		refreshThread.start();
+		
+		poolManager.start();
 	}
 
 	//================================================================================
 	// Send
 	//================================================================================
 	public void sendData(Peer p, byte[] bytes) {
-		try {
-			p.sendData(bytes);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			p.sendData(bytes);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		SendTask sender = new SendTask(p, bytes);
+		poolManager.execute(sender);
 	}
 	
 	public void sendObject(Peer p, Object o) {
@@ -230,7 +241,8 @@ public class PeerNode extends Node{
 		
 		//Link link = connect(p);
 		//link.sendData(l.marshall());
-		p.link.sendData(l.marshall());
+		sendData(p, l.marshall());
+		//p.link.sendData(l.marshall());
 	}
 
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
