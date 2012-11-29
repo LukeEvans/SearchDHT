@@ -329,12 +329,14 @@ public class PeerNode extends Node{
 //				Peer requester = new Peer(requesterHost, requesterPort, requesterID);
 //				Link requesterLink = connect(requester);
 
+				System.out.println("Sending back that it's me");
 				l.sendData(response.marshall());
 			}
 
 			// Else, pass it along
 			else {
 
+				System.out.println("Not me");
 				//System.out.println("is not mine : " + resolveID);
 				Peer nextPeer = state.getNexClosestPeer(resolveID);
 				Link nextHop = nextPeer.link; 
