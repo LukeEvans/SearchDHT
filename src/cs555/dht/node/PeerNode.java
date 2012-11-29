@@ -225,7 +225,7 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
 //		Link lookupPeer = p.link; 
-		System.out.println("Sending lookup to peer: " + p.hostname);
+		System.out.println("Sending lookup to peer: " + p.link.remoteHost);
 		System.out.println("Lookup : " + l);
 		p.link.sendData(l.marshall());
 	}
