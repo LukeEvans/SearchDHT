@@ -225,8 +225,8 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void sendLookup(Peer p, LookupRequest l) {		
 //		Link lookupPeer = p.link; 
-		System.out.println("Sending lookup to peer: " + p.link.remoteHost);
-		System.out.println("Lookup : " + l);
+		//System.out.println("Sending lookup to peer: " + p.link.remoteHost);
+		//System.out.println("Lookup : " + l);
 		p.link.sendData(l.marshall());
 	}
 
@@ -377,10 +377,13 @@ public class PeerNode extends Node{
 			PredessesorResponse oldPred = new PredessesorResponse(state.predecessor.hostname, state.predecessor.port, state.predecessor.id);
 			l.sendData(oldPred.marshall());
 
+			System.out.println("Sent old pred : " + oldPred.hostName);
+			
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
 			pred.setLink(connect(pred));
 			pred.initLink();
+			System.out.println("Inited pred link");
 			state.addPredecessor(pred,false);
 
 			break;
@@ -390,6 +393,8 @@ public class PeerNode extends Node{
 			PredessesorResponse predResp = new PredessesorResponse();
 			predResp.unmarshall(bytes);
 
+			System.out.println("Got pred response : " + predResp.hostName);
+			
 			Peer p = new Peer(predResp.hostName, predResp.port, predResp.id);
 			p.setLink(connect(p));
 			p.initLink();
