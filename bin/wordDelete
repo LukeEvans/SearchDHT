@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cmd="rm /tmp/evansl/dhtData/search/*.words"
+
+ssh beet $cmd &    
+ssh cabbage $cmd &
+ssh carrot $cmd &   
+ssh celery $cmd &
+ssh fennel $cmd &
+ssh mushroom $cmd &   
+ssh shallot $cmd & 
+ssh parsley $cmd &
+ssh potato $cmd & 
+ssh radish $cmd &
