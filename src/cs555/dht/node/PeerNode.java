@@ -227,9 +227,9 @@ public class PeerNode extends Node{
 //		Link lookupPeer = p.link; 
 		System.out.println("Sending lookup to peer: " + p.link.remoteHost);
 		System.out.println("Lookup : " + l);
-		Link link = connect(p);
-		link.sendData(l.marshall());
-		//p.link.sendData(l.marshall());
+		//Link link = connect(p);
+		//link.sendData(l.marshall());
+		p.link.sendData(l.marshall());
 	}
 
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
@@ -366,7 +366,7 @@ public class PeerNode extends Node{
 			reply.unmarshall(bytes);
 
 			// Heard back for FingerTable entry, update state
-			state.parseState(reply, this);
+			state.parseState(reply, this, l);
 
 			break;
 

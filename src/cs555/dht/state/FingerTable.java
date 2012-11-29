@@ -29,8 +29,6 @@ public class FingerTable {
 		// Set size back to zero
 		size = 0;
 		
-		System.out.println("building finger table");
-
 		for (int i=0; i<table.length; i++) {
 			int resolve =  (id + (int) Math.pow(2, (i)));
 			if (resolve > (int) Math.pow(2, Constants.Id_Space) -1 ) {

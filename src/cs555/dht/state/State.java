@@ -1,5 +1,6 @@
 package cs555.dht.state;
 
+import cs555.dht.communications.Link;
 import cs555.dht.node.Node;
 import cs555.dht.node.PeerNode;
 import cs555.dht.peer.*;
@@ -168,15 +169,20 @@ public class State {
 	}
 
 	// Decide where to put this peer in Finger Table
-	public void parseState(LookupRequest l, Node n) {
+	public void parseState(LookupRequest l, Node n, Link link) {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
-		peer.setLink(n.connect(peer));
+		
 
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
+			peer.setLink(link);
 			addSucessor(peer, false);
 		}
 
+		else {
+			peer.setLink(n.connect(peer));
+		}
+		
 		fingerTable.addEntry(l.ftEntry, peer);
 
 	}
