@@ -30,6 +30,7 @@ import cs555.dht.wireformats.SuccessorRequest;
 import cs555.dht.wireformats.TransferRequest;
 import cs555.dht.wireformats.Verification;
 import cs555.search.common.Query;
+import cs555.search.common.Search;
 import cs555.search.common.SeedSet;
 import cs555.search.common.WaitForObject;
 import cs555.search.common.Word;
@@ -528,7 +529,14 @@ public class PeerNode extends Node{
 			System.out.println("Got result : " + w);
 		}
 		
+		Word first = results.get(0);
 		
+		for (int i=1; i<results.size(); i++) {
+			ArrayList<Search> searches = first.getIntersection(results.get(i));
+			first.searchSet = searches;
+		}
+		
+		System.out.println("test : " + first);
 	}
 	
 	public Word handleQuery(Query q, Link previous) {
