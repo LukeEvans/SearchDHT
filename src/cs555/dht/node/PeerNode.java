@@ -378,7 +378,7 @@ public class PeerNode extends Node{
 			predReq.unmarshall(bytes);
 
 			PredessesorResponse oldPred = new PredessesorResponse(state.predecessor.hostname, state.predecessor.port, state.predecessor.id);
-			l.sendData(oldPred.marshall());
+			//l.sendData(oldPred.marshall());
 			
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
@@ -386,6 +386,8 @@ public class PeerNode extends Node{
 //			pred.initLink();
 //			pred.setLink(l);
 			state.addPredecessor(pred,false);
+			
+			pred.link.sendData(oldPred.marshall());
 
 			break;
 
