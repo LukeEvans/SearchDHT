@@ -445,7 +445,17 @@ public class PeerNode extends Node{
 		int i=0;
 		// Go through each word, and add the ones we need
 		for (Word w : set.wordSet.words) {
+			
+			if (w.word.equalsIgnoreCase("colorado")) {
+				System.out.println("word : " + w.word + " hash: " + w.hash );
+			}
+			
 			if (state.itemIsMine(w.hash)) {
+				
+				if (w.word.equalsIgnoreCase("colorado")) {
+					System.out.println("Colorado is mine: " + id);
+				}
+				
 				searchWords.addWord(w);
 				i++;
 				
