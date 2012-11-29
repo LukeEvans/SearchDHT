@@ -159,22 +159,9 @@ public class PeerNode extends Node{
 			return;
 		}
 		
-		ArrayList<Peer> peers = state.getTable();
-		
-		for (Peer p : peers) {
-			p.setLink(connect(p));
-		}
-		
-		
-		for (Word word : intermediarySet.words) {
-			word.hash = Tools.generateHash();
-			try {
-				handleWord(word, peers);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		System.out.println("Seeding : " + intermediarySet);
+		SeedSet seeds = new SeedSet(intermediarySet);
+		handleSeeds(seeds);
 	}
 	
 	public void handleWord(Word word, ArrayList<Peer> peers) throws IOException {
@@ -344,6 +331,7 @@ public class PeerNode extends Node{
 	public void handleSeeds(SeedSet set) {
 		// If we got our own seed set, return
 		if (set.hash == id) {
+			System.out.println("Seeding complete");
 			return;
 		}
 		
@@ -357,10 +345,12 @@ public class PeerNode extends Node{
 			if (state.itemIsMine(w.hash)) {
 				searchWords.addWord(w);
 				i++;
-				System.out.println("Added Words from seed set : " + i);
+				
 				
 			}
 		}
+		
+		System.out.println("Added Words from seed set : " + i);
 		
 		// Forward to our successor
 		Link successorLink = connect(state.successor);
