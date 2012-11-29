@@ -1,11 +1,10 @@
 package cs555.dht.state;
 
-import cs555.dht.communications.Link;
-import cs555.dht.node.Node;
 import cs555.dht.node.PeerNode;
 import cs555.dht.peer.*;
 import cs555.dht.utilities.Constants;
 import cs555.dht.wireformats.*;
+import cs555.dht.wireformats.PredessesorRequest;
 
 public class State {
 	public Peer successor;
@@ -77,16 +76,12 @@ public class State {
 			return;
 		}
 
-		System.out.println("Added new successor : " + p.hostname);
-		
-		myself.setSuccessorLink(p);
 		successor = p;
-		
+
 		fingerTable.fillTableWith(successor);
 
 		// Send predecesor request if, we're not the only one
 		if (successor.id != thisID) {
-			
 			// Tell our new successor that we're it's predecessor
 			PredessesorRequest req = new PredessesorRequest(myself.hostname, myself.port, myself.id);
 			myself.sendPredessessorRequest(successor, req);
@@ -136,7 +131,7 @@ public class State {
 		if (!shouldAddNewPredecessor(p, force)) {		
 			return;
 		}
-		
+
 		predecessor = p;
 
 		// If our successor is ourself, and p as our successor as well
@@ -172,14 +167,12 @@ public class State {
 	// Decide where to put this peer in Finger Table
 	public void parseState(LookupRequest l) {
 		Peer peer = new Peer(l.hostName, l.port, l.id);
-		
-		//peer.setLink(n.connect(peer));
 
 		// If it's our first entry getting back to us, add it as our sucessor
 		if (l.ftEntry == 0) {
 			addSucessor(peer, false);
 		}
-		
+
 		fingerTable.addEntry(l.ftEntry, peer);
 
 	}
