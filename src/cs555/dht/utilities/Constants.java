@@ -42,9 +42,9 @@ public class Constants {
 	// Base path for data to be stored
 	public static final String base_path = "/tmp/evansl/dhtData/";
 	
-	public static final int Refresh_Time = 20;
+	public static final int Refresh_Time = 45;
 	
-	public static final boolean logging = true;
+	public static final boolean logging = false;
 	
 	public static final List<Integer> hashes = Arrays.asList(0,6554,13107,19661,26215,32768,39323,45877,52431,58985);
 }
