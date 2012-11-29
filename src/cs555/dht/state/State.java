@@ -81,7 +81,6 @@ public class State {
 		
 		myself.setSuccessorLink(p);
 		successor = p;
-
 		
 		fingerTable.fillTableWith(successor);
 
