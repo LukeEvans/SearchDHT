@@ -8,7 +8,7 @@ ssh carrot $cmd &
 ssh celery $cmd &
 ssh fennel $cmd &
 ssh mushroom $cmd &   
-ssh lettuce $cmd & 
+ssh shallot $cmd & 
 ssh parsley $cmd &
 ssh potato $cmd & 
 ssh radish $cmd & 
