@@ -360,7 +360,6 @@ public class PeerNode extends Node{
 
 		case Constants.lookup_reply:
 
-			System.out.println("Got a reply");
 			LookupResponse reply = new LookupResponse();
 			reply.unmarshall(bytes);
 
@@ -376,14 +375,11 @@ public class PeerNode extends Node{
 
 			PredessesorResponse oldPred = new PredessesorResponse(state.predecessor.hostname, state.predecessor.port, state.predecessor.id);
 			l.sendData(oldPred.marshall());
-
-			System.out.println("Sent old pred : " + oldPred.hostName);
 			
 			// Add this node as our predessesor
 			Peer pred = new Peer(predReq.hostName, predReq.port, predReq.id);
 			pred.setLink(connect(pred));
 			pred.initLink();
-			System.out.println("Inited pred link");
 			state.addPredecessor(pred,false);
 
 			break;
@@ -392,8 +388,6 @@ public class PeerNode extends Node{
 
 			PredessesorResponse predResp = new PredessesorResponse();
 			predResp.unmarshall(bytes);
-
-			System.out.println("Got pred response : " + predResp.hostName);
 			
 			Peer p = new Peer(predResp.hostName, predResp.port, predResp.id);
 			p.setLink(connect(p));
@@ -401,6 +395,7 @@ public class PeerNode extends Node{
 			state.addPredecessor(p, false);
 
 			if (state.successor.id != state.predecessor.id) {
+				System.out.println("Sending successor req");
 				SuccessorRequest sucReq = new SuccessorRequest(hostname, port, id);
 				Link successorLink = p.link; 
 				successorLink.sendData(sucReq.marshall());
@@ -413,6 +408,8 @@ public class PeerNode extends Node{
 			SuccessorRequest sReq = new SuccessorRequest();
 			sReq.unmarshall(bytes);
 
+			System.out.println("Got sucessor req");
+			
 			Peer sucessor = new Peer(sReq.hostName, sReq.port, sReq.id);
 			sucessor.setLink(connect(sucessor));
 			sucessor.initLink();
