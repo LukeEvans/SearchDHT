@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.sun.tools.javac.code.Attribute.Array;
+
 import cs555.dht.communications.Link;
 import cs555.dht.data.DataItem;
 import cs555.dht.data.DataList;
@@ -252,7 +254,7 @@ public class PeerNode extends Node{
 							System.out.println("Crawled Links : " + intermediarySet.domainLinks);
 
 							printTopLinks();
-							
+
 							break;
 						}
 
@@ -448,6 +450,16 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Diagnostics
 	//================================================================================
+	public boolean nodeAdded(ArrayList<Search> list, Search s) {
+		for (Search search : list) {
+			if (search.pageUrl.equalsIgnoreCase(s.pageUrl)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public void printTopLinks() {
 		// If we got an intermediary set
 		if (intermediarySet != null) {
@@ -467,14 +479,15 @@ public class PeerNode extends Node{
 				if (i >= 250) {
 					break;
 				}
-				
-				System.out.println("Node : " + s);
-				
+
+				if (!nodeAdded(set, s)) {
+					System.out.println("Node : " + s);
+				}
 				i++;
 			}
 		}
 	}
-	
+
 	public void runDiagnostics() {
 		diagnostics = null;
 
@@ -740,7 +753,7 @@ public class PeerNode extends Node{
 
 		if (obj != null && obj instanceof WaitForObject) {
 			System.out.println("Waiting for object");
-			
+
 			Object data = Tools.readObject(l);
 
 			if (data instanceof WordSet) {
