@@ -559,7 +559,7 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Seeding
 	//================================================================================
-	public void handleSeeds(SeedSet set) {
+	public synchronized void handleSeeds(SeedSet set) {
 		// If we got our own seed set, return
 		if (set.hash == id) {
 			System.out.println("Seeding complete");
@@ -574,14 +574,7 @@ public class PeerNode extends Node{
 			searchWords = new WordSet();
 		}
 
-		// Go through each word, and add the ones we need
-		for (Word w : set.wordSet.words) {
-
-			if (state.itemIsMine(w.hash)) {
-				searchWords.addWord(w);
-			}
-		}
-
+		
 		// Forward to our successor
 		Link successorLink = connect(state.successor);
 
@@ -599,6 +592,16 @@ public class PeerNode extends Node{
 		Tools.writeObject(successorLink, set);
 		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
+		
+		
+		// Go through each word, and add the ones we need
+		for (Word w : set.wordSet.words) {
+
+			if (state.itemIsMine(w.hash)) {
+				searchWords.addWord(w);
+			}
+		}
+
 	}
 
 	//================================================================================
