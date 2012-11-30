@@ -595,6 +595,7 @@ public class PeerNode extends Node{
 		//Tools.sleep(3);
 		//successorLink.waitForData();
 		Tools.sleep(1);
+		System.out.println("Sending set");
 		Tools.writeObject(successorLink, set);
 		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
