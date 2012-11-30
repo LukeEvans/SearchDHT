@@ -171,6 +171,7 @@ public class PeerNode extends Node{
 		
 		for (Word w : intermediarySet.words) {
 			w.hash = Tools.generateHash(w.word);
+			System.out.println("Size : " + w.searchSet.size());
 		}
 		
 		System.out.println("Seeding : " + intermediarySet);
@@ -465,7 +466,7 @@ public class PeerNode extends Node{
 				}
 				
 				searchWords.addWord(w);
-				System.out.println("Search Size for word : " + w.word + " : " + w.searchSet.size());
+				//System.out.println("Search Size for word : " + w.word + " : " + w.searchSet.size());
 				
 				i++;
 				
