@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Vector;
 
 import cs555.dht.communications.Link;
 import cs555.dht.data.DataItem;
@@ -59,6 +60,8 @@ public class PeerNode extends Node{
 
 	Diagnostics diagnostics;
 
+	Vector<WordSet> pendingSets;
+	
 	//================================================================================
 	// Constructor
 	//================================================================================
@@ -81,6 +84,7 @@ public class PeerNode extends Node{
 
 		dataList = new DataList();
 
+		pendingSets = new Vector<WordSet>();
 		//searchWords = new WordSet();
 	}
 
@@ -440,8 +444,12 @@ public class PeerNode extends Node{
 
 	public void sendPredessessorRequest(Peer p, PredessesorRequest r) {
 		Link sucessorLink = connect(p);
-		sucessorLink.initLink();
-		sucessorLink.sendData(r.marshall());
+		
+		if (sucessorLink != null) {
+			sucessorLink.initLink();
+			sucessorLink.sendData(r.marshall());
+		}
+		
 	}
 
 
@@ -559,7 +567,21 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Seeding
 	//================================================================================
-	public synchronized void handleSeeds(SeedSet set) {
+	public void resolveSeeds() {
+		
+		synchronized (pendingSets) {
+			for (WordSet set : pendingSets) {
+				for (Word w : set.words) {
+					searchWords.addWord(w);
+				}
+			}
+			
+			System.out.println("Resloving complete");
+		}
+		
+	}
+	
+	public void handleSeeds(SeedSet set) {
 		// If we got our own seed set, return
 		if (set.hash == id) {
 			System.out.println("Seeding complete");
@@ -570,17 +592,21 @@ public class PeerNode extends Node{
 			set.hash = id;
 		}
 
-		if (searchWords == null) {
-			searchWords = new WordSet();
-		}
+//		if (searchWords == null) {
+//			searchWords = new WordSet();
+//		}
+//		
+//		
+//		// Go through each word, and add the ones we need
+//		for (Word w : set.wordSet.words) {
+//
+//			if (state.itemIsMine(w.hash)) {
+//				searchWords.addWord(w);
+//			}
+//		}
 		
-		
-		// Go through each word, and add the ones we need
-		for (Word w : set.wordSet.words) {
-
-			if (state.itemIsMine(w.hash)) {
-				searchWords.addWord(w);
-			}
+		synchronized (pendingSets) {
+			pendingSets.add(set.wordSet);
 		}
 		
 		// Forward to our successor
@@ -1022,6 +1048,10 @@ public class PeerNode extends Node{
 				peer.seedDHT();
 			}
 
+			if (input.equalsIgnoreCase("resolve")) {
+				
+			}
+			
 			else if (input.equalsIgnoreCase("save")) {
 				peer.saveWords();
 			}
