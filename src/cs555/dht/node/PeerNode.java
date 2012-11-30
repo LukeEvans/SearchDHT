@@ -576,11 +576,14 @@ public class PeerNode extends Node{
 		synchronized (pendingSets) {
 			for (WordSet set : pendingSets) {
 				for (Word w : set.words) {
-					searchWords.addWord(w);
 					
-					if (searchWords.words.size() > 50000) {
-						break;
+					if (state.itemIsMine(w.hash)) {
+						searchWords.addWord(w);
 					}
+					
+//					if (searchWords.words.size() > 50000) {
+//						break;
+//					}
 				}
 				
 			}
