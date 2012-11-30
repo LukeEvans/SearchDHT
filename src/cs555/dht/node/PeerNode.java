@@ -583,6 +583,10 @@ public class PeerNode extends Node{
 						break;
 					}
 				}
+				
+				if (searchWords.words.size() > 10000) {
+					break;
+				}
 			}
 			
 			System.out.println("Resloving complete");
