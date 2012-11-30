@@ -1049,7 +1049,7 @@ public class PeerNode extends Node{
 				peer.seedDHT();
 			}
 
-			if (input.equalsIgnoreCase("resolve")) {
+			else if (input.equalsIgnoreCase("resolve")) {
 				peer.resolveSeeds();
 			}
 			
