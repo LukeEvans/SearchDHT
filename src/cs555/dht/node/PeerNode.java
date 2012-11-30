@@ -473,7 +473,7 @@ public class PeerNode extends Node{
 			diag.addDomainInfo(intermediarySet.domain, intermediarySet.domainLinks);
 			
 			for (Word w : intermediarySet.words) {
-				diagnostics.addSearchSet(w.searchSet);
+				diag.addSearchSet(w.searchSet);
 			}
 		}
 		
@@ -484,7 +484,10 @@ public class PeerNode extends Node{
 		successorLink.sendData(Tools.objectToBytes(wait));
 		Tools.sleep(2);
 		Tools.writeObject(successorLink, diagnostics);
+		
+		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
+		
 		
 	}
 	
