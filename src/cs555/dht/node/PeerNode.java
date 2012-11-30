@@ -589,6 +589,7 @@ public class PeerNode extends Node{
 			}
 			
 			System.out.println("Resloving complete");
+			pendingSets = new Vector<WordSet>();
 		//}
 		
 	}
@@ -633,7 +634,7 @@ public class PeerNode extends Node{
 		
 		//Tools.sleep(3);
 		//successorLink.waitForData();
-		Tools.sleep(1);
+		Tools.sleep(2);
 		System.out.println("Sending set");
 		Tools.writeObject(successorLink, set);
 		System.out.println("Forwarded to : " + successorLink.remoteHost);
