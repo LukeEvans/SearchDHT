@@ -585,9 +585,11 @@ public class PeerNode extends Node{
 		// Forward to our successor
 		Link successorLink = connect(state.successor);
 
+		System.out.println("Sending wait message");
+		
 		WaitForObject wait = new WaitForObject();
 		successorLink.sendData(Tools.objectToBytes(wait));
-		Tools.sleep(2);
+		Tools.sleep(3);
 		Tools.writeObject(successorLink, set);
 		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
