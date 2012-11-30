@@ -589,6 +589,7 @@ public class PeerNode extends Node{
 		successorLink.sendData(Tools.objectToBytes(wait));
 		Tools.sleep(2);
 		Tools.writeObject(successorLink, set);
+		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
 	}
 
@@ -774,6 +775,7 @@ public class PeerNode extends Node{
 			else if (data instanceof SeedSet) {
 				SeedSet seeds = (SeedSet) data;
 				l.close();
+				System.out.println("Got Seed Set from: " + l.remoteHost);
 				handleSeeds(seeds);
 			}
 
