@@ -618,6 +618,9 @@ public class PeerNode extends Node{
 	public ArrayList<Search> intersection(Word one, Word two) {
 		ArrayList<Search> intersection = new ArrayList<Search>();
 		
+		System.out.println("ONE's search size : " + one.searchSet.size());
+		System.out.println("TWO's search size : " + two.searchSet.size());
+		
 		for (Search search : one.searchSet) {
 			if (wordHasSearch(two, search)) {
 				intersection.add(search);
