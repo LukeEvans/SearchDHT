@@ -734,8 +734,8 @@ public class PeerNode extends Node{
 			else if (data instanceof Diagnostics) {
 				Diagnostics diag = (Diagnostics) data;
 				System.out.println("Got diag");
-				l.close();
 				handleDiagnostics(diag);
+				l.close();
 			}
 
 			return;
