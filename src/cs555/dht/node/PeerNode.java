@@ -471,12 +471,7 @@ public class PeerNode extends Node{
 					set.add(s);
 				}
 			}
-			Collections.sort(set);
-
-			if (set.size() > 0) {
-				cumulation.add(set.get(0));
-			}
-			
+			Collections.sort(set);			
 			
 			System.out.println("\n================================================================================");
 			System.out.println("Top 30 links");
