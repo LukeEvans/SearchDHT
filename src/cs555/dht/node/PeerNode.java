@@ -524,14 +524,15 @@ public class PeerNode extends Node{
 			Query query = new Query(s.trim(), Tools.generateHash(s));
 			Word item = handleQuery(query, null);
 			results.add(item);
-			System.out.println("one word down : " + item);
+			//System.out.println("one word down : " + item);
 		}
 		
-		// Print 
-		for (Word w : results) {
-			System.out.println("Got result : " + w);
-		}
+//		// Print 
+//		for (Word w : results) {
+//			//System.out.println("Got result : " + w);
+//		}
 		
+		printQueryResults(results, q);
 
 	}
 	
