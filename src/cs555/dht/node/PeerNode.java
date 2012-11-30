@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.sun.tools.javac.code.Attribute.Array;
-
 import cs555.dht.communications.Link;
 import cs555.dht.data.DataItem;
 import cs555.dht.data.DataList;
