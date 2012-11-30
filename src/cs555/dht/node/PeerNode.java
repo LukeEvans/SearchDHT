@@ -578,15 +578,11 @@ public class PeerNode extends Node{
 				for (Word w : set.words) {
 					searchWords.addWord(w);
 					
-					if (searchWords.words.size() > 10000) {
-						System.out.println("over 10000");
+					if (searchWords.words.size() > 50000) {
 						break;
 					}
 				}
 				
-				if (searchWords.words.size() > 10000) {
-					break;
-				}
 			}
 			
 			System.out.println("Resloving complete");
