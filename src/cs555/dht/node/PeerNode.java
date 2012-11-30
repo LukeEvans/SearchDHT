@@ -652,6 +652,10 @@ public class PeerNode extends Node{
 				System.out.println("Got a wordie birdi set: " + intermediarySet);
 				System.out.println("Test Word : " + intermediarySet.words.get(199));
 				
+				for (Word w : intermediarySet.words) {
+					System.out.println("Incoming : " + w.searchSet.size());
+				}
+				
 				System.out.println("Saveing to file..."); 
 				saveIntermediaryToDisk();
 			}
