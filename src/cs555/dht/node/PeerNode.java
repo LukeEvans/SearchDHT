@@ -656,6 +656,7 @@ public class PeerNode extends Node{
 	// Query
 	//================================================================================
 	public void searchDHT(String q) {
+		System.out.println("Querying for : " + q);
 		String[] queryParts = q.split(" ");
 		ArrayList<Word> results = new ArrayList<Word>();
 
