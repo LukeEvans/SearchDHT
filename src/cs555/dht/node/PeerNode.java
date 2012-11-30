@@ -465,6 +465,8 @@ public class PeerNode extends Node{
 				}
 				
 				searchWords.addWord(w);
+				System.out.println("Search Size for word : " + w.word + " : " + w.searchSet.size());
+				
 				i++;
 				
 				
