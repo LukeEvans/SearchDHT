@@ -768,8 +768,6 @@ public class PeerNode extends Node{
 
 		if (obj != null && obj instanceof WaitForObject) {
 			System.out.println("Waiting for object");
-
-			l.sendData(Tools.objectToBytes(obj));
 			
 			Object data = Tools.readObject(l);
 
