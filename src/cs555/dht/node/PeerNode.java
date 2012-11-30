@@ -480,8 +480,8 @@ public class PeerNode extends Node{
 
 				if (!nodeAdded(set, s)) {
 					System.out.println("Node : " + s);
+					i++;
 				}
-				i++;
 			}
 		}
 	}
