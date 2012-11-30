@@ -569,6 +569,10 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void resolveSeeds() {
 		
+		if (searchWords == null) {
+			searchWords = new WordSet();
+		}
+		
 		synchronized (pendingSets) {
 			for (WordSet set : pendingSets) {
 				for (Word w : set.words) {
