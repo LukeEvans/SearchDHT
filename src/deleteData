@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cmd="rm /tmp/evansl/searchData/*"
+cmd="rm /tmp/evansl/dhtData/search/*"
 
 ssh beet $cmd &    
 ssh cabbage $cmd &
