@@ -549,7 +549,7 @@ public class PeerNode extends Node{
 		System.out.println("\n================================================================================");
 		System.out.println("Results for query : " + q);
 		
-		int i=25;
+		int i=0;
 		for (Search s : first.searchSet) {
 			
 			if (i>=25) {
