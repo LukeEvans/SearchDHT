@@ -685,7 +685,7 @@ public class PeerNode extends Node{
 		int i=0;
 		for (Search s : first.searchSet) {
 
-			if (i>=250) {
+			if (i>=30) {
 				break;
 			}
 
