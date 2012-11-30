@@ -715,7 +715,7 @@ public class PeerNode extends Node{
 
 		// If the query belongs to me, reply with the word
 		if (state.itemIsMine(q.queryHash)) {
-			//System.out.println("Word is mine: " + q.queryWord);
+			System.out.println("Word is mine: " + q.queryWord);
 			word = getQueryWord(q.queryWord);
 
 			if (word != null) {
@@ -724,12 +724,12 @@ public class PeerNode extends Node{
 					return word;
 				}
 
-				//System.out.println("Sending word back");
+				System.out.println("Sending word back");
 				Tools.writeObject(previous, word);
 			}
 
 			else {
-				//System.out.println(q.queryWord + " not found. Send back blank");
+				System.out.println(q.queryWord + " not found. Send back blank");
 				Word blank = new Word("-_-Blank-_-");
 				Tools.writeObject(previous, blank);
 			}
@@ -739,7 +739,7 @@ public class PeerNode extends Node{
 		// Else, Pass it along
 		else {
 			Link next = connect(state.getNexClosestPeer(q.queryHash));
-			//System.out.println("Passing " + q.queryWord + " along to : " + next.remoteHost);
+			System.out.println("Passing " + q.queryWord + " along to : " + next.remoteHost);
 
 			next.sendData(Tools.objectToBytes(q));
 			// Wait for word from next
