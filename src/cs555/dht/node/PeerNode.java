@@ -251,6 +251,8 @@ public class PeerNode extends Node{
 							System.out.println("Domain : " + intermediarySet.domain);
 							System.out.println("Crawled Links : " + intermediarySet.domainLinks);
 
+							printTopLinks();
+							
 							break;
 						}
 
@@ -446,6 +448,33 @@ public class PeerNode extends Node{
 	//================================================================================
 	// Diagnostics
 	//================================================================================
+	public void printTopLinks() {
+		// If we got an intermediary set
+		if (intermediarySet != null) {
+
+			ArrayList<Search> set = new ArrayList<Search>();
+
+			for (Word w : intermediarySet.words) {
+
+				for (Search s : w.searchSet) {
+					set.add(s);
+				}
+			}
+			Collections.sort(set);
+
+			int i=0;
+			for (Search s : set) {
+				if (i >= 250) {
+					break;
+				}
+				
+				System.out.println("Node : " + s);
+				
+				i++;
+			}
+		}
+	}
+	
 	public void runDiagnostics() {
 		diagnostics = null;
 
@@ -499,7 +528,6 @@ public class PeerNode extends Node{
 
 		WaitForObject wait = new WaitForObject();
 		successorLink.sendData(Tools.objectToBytes(wait));
-		Tools.readObject(successorLink);
 		//Tools.sleep(2);
 		Tools.writeObject(successorLink, diagnostics);
 
@@ -712,7 +740,6 @@ public class PeerNode extends Node{
 
 		if (obj != null && obj instanceof WaitForObject) {
 			System.out.println("Waiting for object");
-			Tools.writeObject(l, obj);
 			
 			Object data = Tools.readObject(l);
 
