@@ -589,7 +589,8 @@ public class PeerNode extends Node{
 		
 		WaitForObject wait = new WaitForObject();
 		successorLink.sendData(Tools.objectToBytes(wait));
-		Tools.sleep(3);
+		//Tools.sleep(3);
+		successorLink.waitForData();
 		Tools.writeObject(successorLink, set);
 		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
@@ -763,6 +764,8 @@ public class PeerNode extends Node{
 		if (obj != null && obj instanceof WaitForObject) {
 			System.out.println("Waiting for object");
 
+			l.sendData(Tools.objectToBytes(obj));
+			
 			Object data = Tools.readObject(l);
 
 			if (data instanceof WordSet) {
