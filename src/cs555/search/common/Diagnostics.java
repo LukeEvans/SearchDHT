@@ -22,6 +22,7 @@ public class Diagnostics implements Serializable {
 	//================================================================================
 	public Diagnostics(int nodeID) {
 		domainInfos = new ArrayList<DomainInfo>();
+		searchSet = new ArrayList<Search>();
 		id = nodeID;
 		printSize = 250;
 	}

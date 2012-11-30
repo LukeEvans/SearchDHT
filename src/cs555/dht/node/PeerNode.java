@@ -248,6 +248,9 @@ public class PeerNode extends Node{
 							intermediarySet = (WordSet) obj;
 							System.out.println("Read Intermediary : " + intermediarySet);
 
+							System.out.println("Domain : " + intermediarySet.domain);
+							System.out.println("Crawled Links : " + intermediarySet.domainLinks);
+							
 							break;
 						}
 
