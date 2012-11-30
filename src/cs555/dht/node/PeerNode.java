@@ -463,6 +463,7 @@ public class PeerNode extends Node{
 		if (intermediarySet != null) {
 
 			ArrayList<Search> set = new ArrayList<Search>();
+			ArrayList<Search> cumulation = new ArrayList<Search>();
 
 			for (Word w : intermediarySet.words) {
 
@@ -472,14 +473,19 @@ public class PeerNode extends Node{
 			}
 			Collections.sort(set);
 
+			if (set.size() > 0) {
+				cumulation.add(set.get(0));
+			}
+			
 			int i=0;
 			for (Search s : set) {
 				if (i >= 250) {
 					break;
 				}
 
-				if (!nodeAdded(set, s)) {
+				if (!nodeAdded(cumulation, s)) {
 					System.out.println("Node : " + s);
+					cumulation.add(s);
 					i++;
 				}
 			}
