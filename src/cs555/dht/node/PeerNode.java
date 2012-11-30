@@ -532,7 +532,7 @@ public class PeerNode extends Node{
 		Word first = results.get(0);
 		
 		for (int i=1; i<results.size(); i++) {
-			ArrayList<Search> searches = first.getIntersection(results.get(i));
+			ArrayList<Search> searches = intersection(first, results.get(i));
 			System.out.println("Found this many in common : " + searches.size());
 			first.searchSet = searches;
 		}
@@ -605,6 +605,28 @@ public class PeerNode extends Node{
 		return null;
 	}
 	
+	public boolean wordHasSearch(Word word, Search s) {
+		for (Search search : word.searchSet) {
+			if (search.pageUrl.equalsIgnoreCase(s.pageUrl)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public ArrayList<Search> intersection(Word one, Word two) {
+		ArrayList<Search> intersection = new ArrayList<Search>();
+		
+		for (Search search : one.searchSet) {
+			if (wordHasSearch(two, search)) {
+				intersection.add(search);
+				System.out.println("Added 1");
+			}
+		}
+		
+		return intersection;
+	}
 	//================================================================================
 	// Receive
 	//================================================================================
