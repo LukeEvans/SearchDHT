@@ -477,6 +477,11 @@ public class PeerNode extends Node{
 				cumulation.add(set.get(0));
 			}
 			
+			
+			System.out.println("\n================================================================================");
+			System.out.println("Top 250 links");
+			System.out.println("================================================================================\n");
+			
 			int i=0;
 			for (Search s : set) {
 				if (i >= 250) {
@@ -489,6 +494,8 @@ public class PeerNode extends Node{
 					i++;
 				}
 			}
+			
+			System.out.println("");
 		}
 	}
 
