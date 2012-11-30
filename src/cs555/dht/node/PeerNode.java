@@ -54,11 +54,11 @@ public class PeerNode extends Node{
 	RefreshThread refreshThread;
 
 	WordSet intermediarySet;
-	
+
 	WordSet searchWords;
 
 	Diagnostics diagnostics;
-	
+
 	//================================================================================
 	// Constructor
 	//================================================================================
@@ -104,7 +104,7 @@ public class PeerNode extends Node{
 		if (searchWords != null) {
 			System.out.println("Read words from disk: " + searchWords);
 		}
-		
+
 		managerLink = connect(new Peer(dHost, dPort));
 		RegisterRequest regiserReq = new RegisterRequest(hostname, port, id);
 		managerLink.sendData(regiserReq.marshall());
@@ -161,7 +161,7 @@ public class PeerNode extends Node{
 			System.out.println("I am a seeder");
 			System.out.println("Seeding : " + intermediarySet);
 		}
-		
+
 	}
 
 	//================================================================================
@@ -171,44 +171,44 @@ public class PeerNode extends Node{
 		if (intermediarySet == null) {
 			return;
 		}
-		
-//		for (Word w : intermediarySet.words) {
-//			w.hash = Tools.generateHash(w.word);
-//			System.out.println("Size : " + w.searchSet.size());
-//		}
-		
+
+		//		for (Word w : intermediarySet.words) {
+		//			w.hash = Tools.generateHash(w.word);
+		//			System.out.println("Size : " + w.searchSet.size());
+		//		}
+
 		System.out.println("Seeding : " + intermediarySet);
 		SeedSet seeds = new SeedSet(intermediarySet);
 		handleSeeds(seeds);
 	}
-	
+
 	public void saveWords() {
 		if (searchWords == null) {
 			return;
 		}
-		
+
 		// Sorting
 		System.out.println("Sorting...");
 		for (Word w : searchWords.words) {
 			Collections.sort(w.searchSet);
 		}
-		
+
 		// Save
 		System.out.println("Saving...");
 		saveWordResultsToDisk();
 	}
-	
+
 	public void handleWord(Word word, ArrayList<Peer> peers) throws IOException {
-		
+
 		WaitForObject wait = new WaitForObject();
-		
+
 		if (state.itemIsMine(word.hash)) {
 			searchWords.addWord(word);
 		}
-		
+
 		else {
 			Peer next = state.getNexClosestPeer(word.hash);
-			
+
 			// Find the peer in the links we've already connected to
 			for (Peer p : peers) {
 				if (p.equals(next)) {
@@ -217,9 +217,9 @@ public class PeerNode extends Node{
 				}
 			}
 		}
-		
+
 	}
-	
+
 	public void readIntermediaryFromDisk() {
 		File folder = new File(Constants.base_path);
 
@@ -250,7 +250,7 @@ public class PeerNode extends Node{
 
 							System.out.println("Domain : " + intermediarySet.domain);
 							System.out.println("Crawled Links : " + intermediarySet.domainLinks);
-							
+
 							break;
 						}
 
@@ -291,8 +291,8 @@ public class PeerNode extends Node{
 		}
 
 	}
-	
-	
+
+
 	public void readWordResultsFromDisk() {
 		File folder = new File(Constants.base_path);
 
@@ -302,15 +302,15 @@ public class PeerNode extends Node{
 
 				System.out.println("file String : " + fileString);
 
-				
+
 				if (fileString.endsWith(".words")) {
 
 					String idString = fileString.replace(".words", "");
 					idString = idString.replace(Tools.getLocalHostname()+"-", "");
 					id = Integer.parseInt(idString);
-					
+
 					System.out.println("ID:  : " + idString);
-					
+
 					// Read an object
 					Object obj;
 					try {
@@ -367,7 +367,7 @@ public class PeerNode extends Node{
 		}
 
 	}
-	
+
 	//================================================================================
 	// Exit CDN
 	//================================================================================
@@ -407,7 +407,7 @@ public class PeerNode extends Node{
 	//================================================================================
 	public void updateFT() {
 		// Ensure accuracy of Finger Table
-		
+
 		if (state != null) {
 			state.update();
 		}
@@ -442,55 +442,72 @@ public class PeerNode extends Node{
 		sucessorLink.sendData(r.marshall());
 	}
 
-	
+
 	//================================================================================
 	// Diagnostics
 	//================================================================================
 	public void runDiagnostics() {
 		diagnostics = null;
-		
+
 		diagnostics = new Diagnostics(-1);
-		
+
 		handleDiagnostics(diagnostics);
 	}
-	
+
 	public void handleDiagnostics(Diagnostics diag) {
-		
+
 		if (diag.id == id) {
 			diag.print();
-			
+
 			// Save to file
-			
+
 			return;
 		}
-		
+
 		if (diag.id == -1) {
 			diag.id = id;
 		}
-		
+
 		// If we got an intermediary set
 		if (intermediarySet != null) {
 			diag.addDomainInfo(intermediarySet.domain, intermediarySet.domainLinks);
-			
+
+			ArrayList<Search> set = new ArrayList<Search>();
+
 			for (Word w : intermediarySet.words) {
-				diag.addSearchSet(w.searchSet);
+
+				for (Search s : w.searchSet) {
+					set.add(s);
+				}
+			}
+			Collections.sort(set);
+
+			int i=0;
+			for (Search s : set) {
+				if (i >= diag.printSize) {
+					break;
+				}
+
+				diag.addSearch(s);
+
+				i++;
 			}
 		}
-		
+
 		// forward it
 		Link successorLink = connect(state.successor);
-		
+
 		WaitForObject wait = new WaitForObject();
 		successorLink.sendData(Tools.objectToBytes(wait));
 		Tools.sleep(2);
 		Tools.writeObject(successorLink, diagnostics);
-		
+
 		System.out.println("Forwarded to : " + successorLink.remoteHost);
 		successorLink.close();
-		
-		
+
+
 	}
-	
+
 	//================================================================================
 	// Seeding
 	//================================================================================
@@ -500,33 +517,33 @@ public class PeerNode extends Node{
 			System.out.println("Seeding complete");
 			return;
 		}
-		
+
 		if (set.hash == -1) {
 			set.hash = id;
 		}
-		
+
 		if (searchWords == null) {
 			searchWords = new WordSet();
 		}
-		
+
 		// Go through each word, and add the ones we need
 		for (Word w : set.wordSet.words) {
-			
+
 			if (state.itemIsMine(w.hash)) {
 				searchWords.addWord(w);
 			}
 		}
-				
+
 		// Forward to our successor
 		Link successorLink = connect(state.successor);
-		
+
 		WaitForObject wait = new WaitForObject();
 		successorLink.sendData(Tools.objectToBytes(wait));
 		Tools.sleep(2);
 		Tools.writeObject(successorLink, set);
 		successorLink.close();
 	}
-	
+
 	//================================================================================
 	// Transfer data
 	//================================================================================
@@ -549,14 +566,14 @@ public class PeerNode extends Node{
 			Tools.sendFile(d.filename, link.socket);
 		}
 	}
-	
+
 	//================================================================================
 	// Query
 	//================================================================================
 	public void searchDHT(String q) {
 		String[] queryParts = q.split(" ");
 		ArrayList<Word> results = new ArrayList<Word>();
-		
+
 		// Make query
 		for (String s : queryParts) {
 			//System.out.println("Searching for word : " + s);
@@ -564,123 +581,123 @@ public class PeerNode extends Node{
 			Word item = handleQuery(query, null);
 			results.add(item);
 		}
-		
+
 		printQueryResults(results, q);
 
 	}
-	
+
 	public void printQueryResults(ArrayList<Word> results, String q) {
 		Word first = results.get(0);
-		
+
 		for (int i=1; i<results.size(); i++) {
 			ArrayList<Search> searches = intersection(first, results.get(i));
 			first.searchSet = searches;
 		}
-				
+
 		System.out.println("\n================================================================================");
 		System.out.println("Results for query : " + q);
-		
+
 		int i=0;
 		for (Search s : first.searchSet) {
-			
+
 			if (i>=250) {
 				break;
 			}
-			
+
 			System.out.println(i + " : " + s);
 			i++;
 		}
-		
+
 		System.out.println("================================================================================\n");	
 	}
-	
+
 	public Word handleQuery(Query q, Link previous) {
-		
+
 		Word word = null; 
-		
+
 		// If the query belongs to me, reply with the word
 		if (state.itemIsMine(q.queryHash)) {
 			//System.out.println("Word is mine: " + q.queryWord);
 			word = getQueryWord(q.queryWord);
-			
+
 			if (word != null) {
-				
+
 				if (previous == null) {
 					return word;
 				}
-				
+
 				//System.out.println("Sending word back");
 				Tools.writeObject(previous, word);
 			}
-			
+
 			else {
 				//System.out.println(q.queryWord + " not found. Send back blank");
 				Word blank = new Word("-_-Blank-_-");
 				Tools.writeObject(previous, blank);
 			}
-			
+
 		}
-		
+
 		// Else, Pass it along
 		else {
 			Link next = connect(state.getNexClosestPeer(q.queryHash));
 			//System.out.println("Passing " + q.queryWord + " along to : " + next.remoteHost);
-			
+
 			next.sendData(Tools.objectToBytes(q));
 			// Wait for word from next
 			Object obj = Tools.readObject(next);
-			
+
 			if (obj instanceof Word) {
 				word = (Word) obj;
-				
+
 				if (previous == null) {
 					return word;
 				}
 			}
-			
+
 			Tools.writeObject(previous, obj);
-			
+
 			// Close links
 			next.close();
 			previous.close();
-			
+
 		}
-		
+
 		return word;
 	}
-	
+
 	public Word getQueryWord(String word) {
 		for  (Word w : searchWords.words) {
 			if (w.word.equalsIgnoreCase(word)) {
 				return w;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public boolean wordHasSearch(Word word, Search s) {
 		for (Search search : word.searchSet) {
 			if (search.pageUrl.equalsIgnoreCase(s.pageUrl)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public ArrayList<Search> intersection(Word one, Word two) {
 		ArrayList<Search> intersection = new ArrayList<Search>();
-		
+
 		//System.out.println("ONE's search size : " + one.searchSet.size());
 		//System.out.println("TWO's search size : " + two.searchSet.size());
-		
+
 		for (Search search : one.searchSet) {
 			if (wordHasSearch(two, search)) {
 				intersection.add(search);
 			}
 		}
-		
+
 		return intersection;
 	}
 	//================================================================================
@@ -700,32 +717,32 @@ public class PeerNode extends Node{
 				intermediarySet = (WordSet) data;
 
 				System.out.println("Recieved a word set from a crawler");
-				
+
 				System.out.println("Saving to file..."); 
 				saveIntermediaryToDisk();
 			}
-			
+
 			else if (data instanceof SeedSet) {
 				SeedSet seeds = (SeedSet) data;
 				l.close();
 				handleSeeds(seeds);
 			}
-			
+
 			else if (data instanceof Diagnostics) {
 				Diagnostics diag = (Diagnostics) data;
 				System.out.println("Got diag");
 				l.close();
 				handleDiagnostics(diag);
 			}
-			
+
 			return;
 		}
-		
+
 		else if (obj instanceof Query) {
 			Query query = (Query) obj;
 			System.out.println("Got query word :" + query.queryWord + ": hash: " + query.queryHash);
 			handleQuery(query, l);
-			
+
 			return;
 		}
 
@@ -939,19 +956,19 @@ public class PeerNode extends Node{
 				System.exit(0);
 
 			}
-			
+
 			if (input.equalsIgnoreCase("seed")) {
 				peer.seedDHT();
 			}
-			
+
 			else if (input.equalsIgnoreCase("save")) {
 				peer.saveWords();
 			}
-			
+
 			else if (input.equalsIgnoreCase("diag")) {
 				peer.runDiagnostics();
 			}
-			
+
 			else {
 				peer.searchDHT(input);
 			}
