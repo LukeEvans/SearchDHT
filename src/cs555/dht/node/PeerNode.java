@@ -577,6 +577,10 @@ public class PeerNode extends Node{
 			for (WordSet set : pendingSets) {
 				for (Word w : set.words) {
 					searchWords.addWord(w);
+					
+					if (searchWords.words.size() > 10000) {
+						break;
+					}
 				}
 			}
 			
