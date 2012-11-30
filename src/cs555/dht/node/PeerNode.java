@@ -169,10 +169,10 @@ public class PeerNode extends Node{
 			return;
 		}
 		
-		for (Word w : intermediarySet.words) {
-			w.hash = Tools.generateHash(w.word);
-			System.out.println("Size : " + w.searchSet.size());
-		}
+//		for (Word w : intermediarySet.words) {
+//			w.hash = Tools.generateHash(w.word);
+//			System.out.println("Size : " + w.searchSet.size());
+//		}
 		
 		System.out.println("Seeding : " + intermediarySet);
 		SeedSet seeds = new SeedSet(intermediarySet);
@@ -532,15 +532,34 @@ public class PeerNode extends Node{
 			System.out.println("Got result : " + w);
 		}
 		
+
+	}
+	
+	public void printQueryResults(ArrayList<Word> results, String q) {
 		Word first = results.get(0);
 		
 		for (int i=1; i<results.size(); i++) {
 			ArrayList<Search> searches = intersection(first, results.get(i));
-			System.out.println("Found this many in common : " + searches.size());
 			first.searchSet = searches;
 		}
 		
 		System.out.println("test : " + first);
+		
+		System.out.println("\n================================================================================");
+		System.out.println("Results for query : " + q);
+		
+		int i=25;
+		for (Search s : first.searchSet) {
+			
+			if (i>=25) {
+				break;
+			}
+			
+			System.out.println(i + " : " + s);
+			i++;
+		}
+		
+		System.out.println("================================================================================\n");	
 	}
 	
 	public Word handleQuery(Query q, Link previous) {
@@ -627,7 +646,6 @@ public class PeerNode extends Node{
 		for (Search search : one.searchSet) {
 			if (wordHasSearch(two, search)) {
 				intersection.add(search);
-				System.out.println("Added 1");
 			}
 		}
 		
