@@ -1075,17 +1075,17 @@ public class PeerNode extends Node{
 				peer.seedDHT();
 			}
 
-			else if (input.equalsIgnoreCase("resolve")) {
-				peer.resolveSeeds();
-			}
+//			else if (input.equalsIgnoreCase("resolve")) {
+//				peer.resolveSeeds();
+//			}
 			
 			else if (input.equalsIgnoreCase("save")) {
 				peer.saveWords();
 			}
 
-			else if (input.equalsIgnoreCase("diag")) {
-				peer.runDiagnostics();
-			}
+//			else if (input.equalsIgnoreCase("diag")) {
+//				peer.runDiagnostics();
+//			}
 
 			else {
 				peer.searchDHT(input);
