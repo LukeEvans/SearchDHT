@@ -573,12 +573,19 @@ public class PeerNode extends Node{
 			searchWords = new WordSet();
 		}
 		
+		int i=0;
 		//synchronized (pendingSets) {
 			for (WordSet set : pendingSets) {
 				for (Word w : set.words) {
 					
 					if (state.itemIsMine(w.hash)) {
+						
+						if (w.word.equalsIgnoreCase("science")) {
+							System.out.println("Science is mine hash : " + w.hash + " my id: " + id);
+						}
+						
 						searchWords.addWord(w);
+						i++;
 					}
 					
 //					if (searchWords.words.size() > 50000) {
@@ -589,6 +596,7 @@ public class PeerNode extends Node{
 			}
 			
 			System.out.println("Resloving complete");
+			System.out.println("Added Words : " + i);
 			pendingSets = new Vector<WordSet>();
 		//}
 		
