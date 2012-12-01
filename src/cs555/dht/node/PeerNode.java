@@ -191,12 +191,6 @@ public class PeerNode extends Node{
 			return;
 		}
 
-		// Sorting
-		System.out.println("Sorting...");
-		for (Word w : searchWords.words) {
-			Collections.sort(w.searchSet);
-		}
-
 		// Save
 		System.out.println("Saving...");
 		saveWordResultsToDisk();
@@ -597,6 +591,13 @@ public class PeerNode extends Node{
 			
 			System.out.println("Resloving complete");
 			System.out.println("Added Words : " + i);
+			
+			// Sorting
+			System.out.println("Sorting...");
+			for (Word w : searchWords.words) {
+				Collections.sort(w.searchSet);
+			}
+			
 			pendingSets = new Vector<WordSet>();
 		//}
 		
