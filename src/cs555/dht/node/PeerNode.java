@@ -619,21 +619,21 @@ public class PeerNode extends Node{
 		}
 		
 		
-		// Go through each word, and add the ones we need
-		for (Word w : set.wordSet.words) {
-
-			if (state.itemIsMine(w.hash)) {
-				searchWords.addWord(w);
-				
-				if (w.word.equalsIgnoreCase("science")) {
-					System.out.println("Science is mine hash : " + w.hash + " my id: " + id);
-				}
-			}
-		}
-		
-//		synchronized (pendingSets) {
-//			pendingSets.add(set.wordSet);
+//		// Go through each word, and add the ones we need
+//		for (Word w : set.wordSet.words) {
+//
+//			if (state.itemIsMine(w.hash)) {
+//				searchWords.addWord(w);
+//				
+//				if (w.word.equalsIgnoreCase("science")) {
+//					System.out.println("Science is mine hash : " + w.hash + " my id: " + id);
+//				}
+//			}
 //		}
+		
+		synchronized (pendingSets) {
+			pendingSets.add(set.wordSet);
+		}
 		
 		// Forward to our successor
 		Link successorLink = connect(state.successor);
@@ -1075,9 +1075,9 @@ public class PeerNode extends Node{
 				peer.seedDHT();
 			}
 
-//			else if (input.equalsIgnoreCase("resolve")) {
-//				peer.resolveSeeds();
-//			}
+			else if (input.equalsIgnoreCase("resolve")) {
+				peer.resolveSeeds();
+			}
 			
 			else if (input.equalsIgnoreCase("save")) {
 				peer.saveWords();
