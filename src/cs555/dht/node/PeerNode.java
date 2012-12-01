@@ -614,22 +614,26 @@ public class PeerNode extends Node{
 			set.hash = id;
 		}
 
-//		if (searchWords == null) {
-//			searchWords = new WordSet();
-//		}
-//		
-//		
-//		// Go through each word, and add the ones we need
-//		for (Word w : set.wordSet.words) {
-//
-//			if (state.itemIsMine(w.hash)) {
-//				searchWords.addWord(w);
-//			}
-//		}
-		
-		synchronized (pendingSets) {
-			pendingSets.add(set.wordSet);
+		if (searchWords == null) {
+			searchWords = new WordSet();
 		}
+		
+		
+		// Go through each word, and add the ones we need
+		for (Word w : set.wordSet.words) {
+
+			if (state.itemIsMine(w.hash)) {
+				searchWords.addWord(w);
+				
+				if (w.word.equalsIgnoreCase("science")) {
+					System.out.println("Science is mine hash : " + w.hash + " my id: " + id);
+				}
+			}
+		}
+		
+//		synchronized (pendingSets) {
+//			pendingSets.add(set.wordSet);
+//		}
 		
 		// Forward to our successor
 		Link successorLink = connect(state.successor);
